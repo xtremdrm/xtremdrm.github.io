@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles/register.css">
+    <title>Register Page</title>
+</head>
+<body>
+    <img src="resources/register_background.avif" class="background-image">
+    <div class="register-form-container">
+        <h1 class="register-title">Register</h1>
+        <form action="/submit_registration" method="post" class="register-form"></form>
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required>
+            <label for="surname">Last name</label>
+            <input type="text" id="surname" name="surname" required>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="email">Email:</label>
+            <input type="text" id="email" name="email" required>
+            <div class="login">
+                <label for="login" class="acc">Already have an account? <a href="/login.html">Log in</a></label><br><br><br>
+            </div>
+            <input type="submit" onclick="window.location.href='login.html'"value="Register">
+        </form>
+    </div>
+</body>
+</html>

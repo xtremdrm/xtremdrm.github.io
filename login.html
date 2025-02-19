@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<body>
+    <title>Login</title>
+    <link rel="stylesheet" href="/styles/login.css">
+    <div class="login">
+    <img src="resources/background.avif" alt="logo" class="login__img">
+    <form action="/index.html" method="post" class="login__form">
+        <div class="login__block">
+            <div class="login__input">
+                <h1 class="login__title">Log in</h1>
+                <table>
+                    <tr>
+                        <td>
+                            <label for="username" class="login__userlabel">Username:</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="text" placeholder="Insert username" name="username" id="username" required
+                                class="login__inputusername"><br>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="password" class="login__passwordlabel">Password:</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="password" placeholder="Insert password" name="password"
+                                class="login__inputpassword" id="password" required><br>
+                        </td>
+                    </tr>
+                </table>
+                <div class="login__checkbox">
+                    <input type="checkbox" class="remembercheckbox" name="remember" id="remember">
+                    <label for="remember" class="rememberlabel">Remember me</label>
+                </div>
+                <input type="submit" value="Log In" id="botonlg" class="login__submit">
+            </div>
+        </div>
+        <div class="registerpanel">
+            <label>Don't have a user?</label>
+            <a href="registerpage.html">Sign in</a>
+        </div>
+    </form>
+    </div>
+</body>
+
+</html>
