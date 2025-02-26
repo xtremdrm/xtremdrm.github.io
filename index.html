@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Menu</title>
+    <title>MB MOTORS-Main Page</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/navbar.css">
@@ -17,7 +17,10 @@
 <body>
     <mi-cabecera></mi-cabecera>
     <div class="banner">
-        <img src="resources/merc.webp" alt="Imagen 1">
+        <video id="miVideo" autoplay muted loop>
+            <source src="resources/showcase.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
         <div class="banner-text">
             <h1> MB <br> MOTORS </h1>
         </div>
@@ -27,11 +30,13 @@
         <button onclick="myFunction()" class="cat">Nuestros coches</button>
         <script>
             function myFunction() {
-                window.location.href = 'colecciones.html';
+                window.location.href = 'catalogo.html';
             }
         </script>
-        <button class="prod" onclick="ropa.html">Nuestras Marcas</button>
+        <button class="prod" onclick="window.location.href='colecciones.html'">Nuestras Marcas</button>
     </div>
+    <mi-footer></mi-footer>
     <script src="scripts/Cabecera.js"></script>
+    <script src="scripts/footer.js"></script>
 </body>
 </html>

@@ -166,10 +166,10 @@ body{
 }
 
 h1{
-    margin-top: 250px;
+    padding: 20px;
     font-size: 70px;
     font-weight: bold;
-    text-align: center;
+    text-align: CENTER;
 }
 
 h3{
@@ -199,8 +199,8 @@ h3{
 .item img{
     border-radius: 2px;
     transition: transform 0.5s ease-in-out;
-    width: 300px; 
-    height: 300px;
+    width: 200px; 
+    height: 100px;
 }
 
 .item img:hover{
@@ -209,28 +209,25 @@ h3{
 
 .item a{
     text-align: center;
+    font-size: 25px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     text-decoration: none;
     color: white;
 }
 
-/* Responsive con Bootstrap */
 @media (max-width: 768px) {
     .menu {
         flex-direction: column;
         align-items: center;
         gap: 20px;
     }
-    .navright {
-        position: static;
-        justify-content: center;
-        margin-top: 20px;
-    }
     .logo-image {
         width: 80px;
         height: 80px;
     }
     .catalogo {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(1, 1fr);
+        gap:100px;
     }
 }
 

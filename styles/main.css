@@ -23,7 +23,7 @@ body {
     position: relative;
 }
 
-.banner img {
+.banner video {
     width: 100%;
     height: 120%;
     object-fit: cover;
@@ -56,7 +56,7 @@ body {
 button.cat,
 button.prod {
     background-color: rgba(0, 0, 0, 0.5);
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-family: "Bangers", serif;
     font-weight: bold;
     border: 3px solid white;
     color: white;

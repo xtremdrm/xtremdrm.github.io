@@ -1,4 +1,4 @@
-/* Estilos generales del menú */
+
 nav {
     display: flex;
     justify-content: center;
@@ -40,7 +40,7 @@ nav {
 
 .menu a {
     text-decoration: none;
-    font-family: 'Gill Sans', sans-serif;
+    font-family: "Bangers", serif;
     font-weight: bold;
     color: white;
     font-size: 18px;
@@ -52,7 +52,6 @@ nav {
     color: #aaaaaa;
 }
 
-/* Estilos del submenú */
 .submenu {
     position: relative;
 }
@@ -66,7 +65,6 @@ nav {
     display: none;
     width: 200px;
     border-radius: 8px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
     padding: 10px 0;
     opacity: 0;
     transform: translateY(-10px);
@@ -100,7 +98,6 @@ nav {
     transform: translateY(0);
 }
 
-/* Estilos adicionales para mejorar la apariencia */
 .navright {
     position: absolute;
     display: flex;
@@ -161,19 +158,41 @@ nav {
     font-size: 20px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1405px) {
+    nav{
+        justify-content: left;
+    }
     .menu {
         flex-direction: column;
         align-items: center;
-        gap: 20px;
+        text-align: left;
+        gap: 30px;
     }
     .navright {
         position: static;
-        justify-content: center;
+        justify-content: right;
         margin-top: 20px;
     }
     .logo-image {
         width: 80px;
         height: 80px;
+    }
+    .dropdown {
+        position: absolute; /* Cambia a absolute para un mejor control */
+        top: 100%; /* Ajusta según sea necesario */
+        margin-top: 10px; /* Añade un margen superior para evitar superposición */
+        background-color: transparent;
+        list-style: none;
+        display: none;
+        width: 200px;
+        border-radius: 8px;
+        padding: 10px 0;
+        opacity: 0;
+        transform: translateY(-10px); /* Corrige translateV a translateY */
+        transition: opacity 0.3s ease, transform 0.3s ease;
+        z-index: 1001;
+    }
+    .dropdown a{
+        color: #ffffff;
     }
 }
