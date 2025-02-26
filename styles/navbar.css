@@ -7,14 +7,17 @@ nav {
     z-index: 1000;
     border-bottom: 2px solid #ffffff;
 }
-.logo-link {  
+.menu-toggle{
+    display:none;
+}
+.logo-link {
     display: block;
     text-align: center;
 }
 
 .logo-image {
-    width: 110px; 
-    height: 110px; 
+    width: 110px;
+    height: 110px;
 }
 
 .menu {
@@ -23,6 +26,7 @@ nav {
     gap: 40px;
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Permite que los elementos se acomoden en pantallas pequeñas */
 }
 
 .menu li {
@@ -155,4 +159,21 @@ nav {
 
 .cart i {
     font-size: 20px;
+}
+
+@media (max-width: 768px) {
+    .menu {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    .navright {
+        position: static;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .logo-image {
+        width: 80px;
+        height: 80px;
+    }
 }
