@@ -6,7 +6,7 @@ class Cabecera extends HTMLElement {
             <img src="resources/mb.png" alt="Logo" class="logo-image">
         </a>
         <nav>
-            <button class="menu-toggle">☰</button>
+            <div class="navleft"></div>
             <ul class="menu">
                 <li><a href="#">¿Quiénes somos?</a></li>
                 <li class="submenu">
@@ -25,18 +25,18 @@ class Cabecera extends HTMLElement {
                         <li><a href="#">BMW</a></li>
                     </ul>
                 </li>
-                <li><a href="#">Contacto</a></li>
+                <li><a href="contacto.html">Contacto</a></li>
             </ul> 
-        </nav>
-                            <div class="navright">
-            <button class="cart" onclick="window.location.href='carrito.html'">
+            <button class="menu-toggle">☰</button>
+            <div class="navright">
+                <button class="cart" onclick="window.location.href='carrito.html'">
                 <i class="bi bi-cart-dash"></i>
-            </button>
-            <button class="login" onclick="window.location.href='login.html'">
+                </button>
+                <button class="login" onclick="window.location.href='login.html'">
                 <i class="bi bi-person"></i>
-                Iniciar Sesión
-            </button>
-        </div> 
+                </button>
+            </div> 
+        </nav>
         `;
     }
 }

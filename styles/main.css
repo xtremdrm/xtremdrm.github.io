@@ -15,7 +15,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100vw;
+    width: 100;
     height: 60vh;
     overflow: hidden;
     border-top: 2px solid white;
@@ -70,4 +70,28 @@ button.cat:hover,
 button.prod:hover {
     background-color: rgba(255, 255, 255, 0.2);
     transform: scale(1.1);
+}
+@media (max-width: 1405px){
+    .banner{
+        justify-content: center;
+    }
+    .banner h1{
+        font-size: 75px;
+    }
+}
+@media (max-width: 440px) {
+    .banner h1{
+        font-size: 45px;
+    }
+    .buttons{
+        display: flex;
+        justify-content: center;
+    }
+    button.cat,
+button.prod {
+    padding: 6px 10px;
+    font-size: 9px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
 }

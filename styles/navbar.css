@@ -1,18 +1,25 @@
-
 nav {
     display: flex;
-    justify-content: center;
+    justify-content:space-between;
+    align-items: center;
     position: relative;
-    overflow: visible;
+    height: fit-content;
     z-index: 1000;
+    padding: 0 20px;
     border-bottom: 2px solid #ffffff;
+}
+.vacio{
+    flex: 1;
 }
 .menu-toggle{
     display:none;
 }
 .logo-link {
+    margin : 0 auto;
     display: block;
     text-align: center;
+    width: fit-content;
+    height: fit-content;
 }
 
 .logo-image {
@@ -99,12 +106,9 @@ nav {
 }
 
 .navright {
-    position: absolute;
     display: flex;
     flex-direction: row;
-    top: 10px;
-    right: 20px;
-    margin-top: 98px;
+    left: 500px;
     z-index: 1000;
 }
 
@@ -119,9 +123,8 @@ nav {
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    border: 2px solid white;
     border-radius: 50px;
-    padding: 10px 20px;
+    padding: 10px 10px;
     transition: background-color 0.3s, color 0.3s;
 }
 
@@ -160,18 +163,32 @@ nav {
 
 @media (max-width: 1405px) {
     nav{
-        justify-content: left;
+        justify-content:space-between;
+
+    }
+    .navleft{
+        display: none;
     }
     .menu {
+        display: none;
         flex-direction: column;
         align-items: center;
         text-align: left;
         gap: 30px;
     }
+    .menu-toggle{
+        display: block;
+        background-color: transparent;
+        text-decoration: none;
+        text-shadow: none;
+        font-size: 35px;
+        margin: 20px;
+        border: 0px;
+
+        color: #ffffff;
+    }
     .navright {
-        position: static;
         justify-content: right;
-        margin-top: 20px;
     }
     .logo-image {
         width: 80px;
@@ -194,5 +211,22 @@ nav {
     }
     .dropdown a{
         color: #ffffff;
+    }
+}
+@media (max-width: 1405px) {
+    .menu-toggle{
+        display: block;
+        background-color: transparent;
+        text-decoration: none;
+        text-shadow: none;
+        font-size: 20px;
+        margin: 20px;
+        border: 0px;
+
+        color: #ffffff;
+    }
+    .logo-image {
+        width: 80;
+        height: 80px;
     }
 }
