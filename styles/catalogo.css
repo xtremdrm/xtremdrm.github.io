@@ -1,84 +1,93 @@
-body{
+body {
     background-color: #161515;
     color: white;
     font-family: 'Radley', serif;
 }
 
-h1{
+h1 {
     padding: 20px;
     font-size: 70px;
     font-weight: bold;
     text-align: CENTER;
 }
 
-h3{
+h3 {
     font-size: 28px;
     padding: 20px;
 }
 
-.catalogo{
+.catalogo {
     padding-top: 30px;
     display: grid;
-    grid-template-columns: repeat(3,1fr);
-    grid-template-rows: repeat(3,1fr);
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
     justify-content: center;
     gap: 30px;
 }
 
-.desc{
+.desc {
     text-align: center;
 }
 
-.item{
-    background: rgb(99,99,101);
-background: -moz-linear-gradient(0deg, rgba(99,99,101,0.938813025210084) 38%, rgba(0,0,0,1) 100%, rgba(0,212,255,1) 100%);
-background: -webkit-linear-gradient(0deg, rgba(99,99,101,0.938813025210084) 38%, rgba(0,0,0,1) 50%, rgba(0,212,255,1) 100%);
-background: linear-gradient(0deg, rgba(99,99,101,0.938813025210084) 2%, rgba(0,0,0,1) 100%, rgba(0,212,255,1) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#636365",endColorstr="#00d4ff",GradientType=1);
+.container {
+    justify-content: center;
+    display: flex;
+}
+
+.item {
+    background: rgb(99, 99, 101);
+    background: -moz-linear-gradient(0deg, rgba(99, 99, 101, 0.938813025210084) 38%, rgba(0, 0, 0, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    background: -webkit-linear-gradient(0deg, rgba(99, 99, 101, 0.938813025210084) 38%, rgba(0, 0, 0, 1) 50%, rgba(0, 212, 255, 1) 100%);
+    background: linear-gradient(0deg, rgba(99, 99, 101, 0.938813025210084) 2%, rgba(0, 0, 0, 1) 100%, rgba(0, 212, 255, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#636365", endColorstr="#00d4ff", GradientType=1);
     display: flex;
     flex-direction: column;
     align-items: center;
     height: 600px;
+    width: 400;
     margin-top: 150px;
     border-radius: 20px;
     padding: 30px;
     backdrop-filter: blur;
 }
 
-.item img{
+.item img {
     border-radius: 2px;
     transition: transform 0.5s ease-in-out;
     width: 400px;
-    height: fit-content;
+    height: 300px;
+    object-fit: contain;
     margin-bottom: 50px;
 }
 
-.item img:hover{
+.item img:hover {
     transform: scale(1.05);
 }
 
-.item a{
-    text-align: center;
-    font-size: 25px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    text-decoration: none;
-    color: white;
-}
-@media (max-width: 768px) {
+.item p {}
+
+@media (max-width: 1550px) {
     .catalogo {
-        grid-template-columns: repeat(1, 1fr);
-        gap:100px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 100px;
     }
 }
 
-@media (max-width: 440px) {
+@media (max-width: 1286px) {
     .catalogo {
-        grid-template-columns: repeat(1, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
-    h1{
+
+    h1 {
         font-size: 45px;
     }
-    h3{
+
+    h3 {
         font-size: 15px;
+    }
+}
+@media (max-width: 836px) {
+    .catalogo {
+        grid-template-columns: repeat(1, 1fr);
     }
 }
