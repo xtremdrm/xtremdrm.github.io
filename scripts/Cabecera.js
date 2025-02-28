@@ -20,9 +20,9 @@ class Cabecera extends HTMLElement {
                 <li class="submenu">
                     <a href="#">Nuestras Marcas</a>
                     <ul class="dropdown">
-                        <li><a href="#">Mercedes</a></li>
-                        <li><a href="#">Audi</a></li>
-                        <li><a href="#">BMW</a></li>
+                        <li><a href="mercedes.html">Mercedes</a></li>
+                        <li><a href="audi.html">Audi</a></li>
+                        <li><a href="bmw.html">BMW</a></li>
                     </ul>
                 </li>
                 <li><a href="contacto.html">Contacto</a></li>
