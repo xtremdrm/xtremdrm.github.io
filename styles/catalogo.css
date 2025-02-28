@@ -95,13 +95,19 @@ h3 {
     .catalogo {
         grid-template-columns: repeat(2, 1fr);
     }
-
+    .item{
+        margin-top: 0;
+    }
     h1 {
-        font-size: 45px;
+        font-size: 70px;
+        text-align: center;
+        margin-top: 50px;
+        margin-left: 0;
+        margin-right: 0;
     }
 
     h3 {
-        font-size: 15px;
+        font-size: 25px;
     }
 }
 @media (max-width: 836px) {
@@ -110,13 +116,25 @@ h3 {
     }
 }
 @media (max-width: 450px) {
+    h1{
+        font-size:45px;
+        text-align: center;
+        margin-top: 50px;
+        margin-left: 0;
+        margin-right: 0;
+    }
     .item{
-        height: 500px;
-        width: 350px;
+        margin-top: 0;
+        height: 400px;
+        width: 280px;
     }
     .item p{
-        font-size: 22px;
-        margin-bottom: 10px;
+        font-size: 17px;
+        margin-bottom: 8px;
+    }
+    .item button{
+        padding-left:80px;
+        padding-right:80px;
     }
     .item img{
         height:200px;
