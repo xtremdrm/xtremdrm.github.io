@@ -129,7 +129,7 @@ h3 {
         width: 280px;
     }
     .item p{
-        font-size: 17px;
+        font-size: 15px;
         margin-bottom: 8px;
     }
     .item button{
@@ -137,7 +137,7 @@ h3 {
         padding-right:80px;
     }
     .item img{
-        height:200px;
+        height:180px;
         width:200px;
     }
 }
