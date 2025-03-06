@@ -12,9 +12,9 @@ class Cabecera extends HTMLElement {
                 <li class="submenu">
                     <a href="#">Nuestras Gamas</a>
                     <ul class="dropdown">
-                        <li><a href="#">Basic</a></li>
-                        <li><a href="#">Mid</a></li>
-                        <li><a href="#">Luxury</a></li>
+                        <li><a href="basic.html">Basic</a></li>
+                        <li><a href="mid.html">Mid</a></li>
+                        <li><a href="luxury.html">Luxury</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
@@ -57,9 +57,9 @@ class Cabecera extends HTMLElement {
                 </a>
                 <div class="collapse" id="gamasCollapse" data-bs-parent="#offcanvasMenu">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="#">Basic</a></li>
-                        <li class="list-group-item"><a href="#">Mid</a></li>
-                        <li class="list-group-item"><a href="#">Luxury</a></li>
+                        <li class="list-group-item"><a href="basic.html">Basic</a></li>
+                        <li class="list-group-item"><a href="mid.html">Mid</a></li>
+                        <li class="list-group-item"><a href="luxury.html">Luxury</a></li>
                     </ul>
                 </div>
             </li>
