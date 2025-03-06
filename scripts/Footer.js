@@ -9,6 +9,7 @@ class Footer extends HTMLElement {
     flex-direction: row; 
     align-items: center; 
     justify-content: left;
+    bottom: 0;
     background-color: rgb(59, 59, 59); 
     border-top: 3px solid white; 
 ">
