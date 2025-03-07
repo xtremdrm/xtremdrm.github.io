@@ -8,9 +8,9 @@ class Cabecera extends HTMLElement {
         <nav>
             <div class="navleft"></div>
             <ul class="menu">
-                <li><a href="#">¿Quiénes somos?</a></li>
+                <li><a href="info.html">¿Quiénes somos?</a></li>
                 <li class="submenu">
-                    <a href="#">Nuestras Gamas</a>
+                    <a href="info.html">Nuestras Gamas</a>
                     <ul class="dropdown">
                         <li><a href="basic.html">Basic</a></li>
                         <li><a href="mid.html">Mid</a></li>
@@ -48,7 +48,7 @@ class Cabecera extends HTMLElement {
     <div class="accordion" id="offcanvasMenu">
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a class="nav-link" href="#">¿Quiénes somos?</a>
+                <a class="nav-link" href="info.html">¿Quiénes somos?</a>
             </li>
             
             <li class="nav-item">
