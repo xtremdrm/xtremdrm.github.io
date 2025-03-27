@@ -3,6 +3,8 @@ class Footer extends HTMLElement {
         super();
         this.innerHTML = `
         <footer style="
+    position: fixed;
+    bottom: 0;
     margin-top: 100px; 
     width: 100%; 
     display: flex; 
