@@ -10,7 +10,7 @@ class Cabecera extends HTMLElement {
             <ul class="menu">
                 <li><a href="info.html">¿Quiénes somos?</a></li>
                 <li class="submenu">
-                    <a href="info.html">Nuestras Gamas</a>
+                    <a href="">Nuestras Gamas</a>
                     <ul class="dropdown">
                         <li><a href="basic.html">Basic</a></li>
                         <li><a href="mid.html">Mid</a></li>
