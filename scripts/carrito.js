@@ -34,15 +34,13 @@ function getCarrito(){
     return JSON.parse(localStorage.getItem("carrito"));
 }
 function eliminarArticulo(nombre) {
-    let carrito = getCarrito();
-    console.log("Carrito antes de eliminar:", carrito); // Ver qué productos hay antes
-
+    carrito = getCarrito();
+    console.log("Carrito antes de eliminar:", carrito); 
     carrito = carrito.filter(producto => producto.nombre !== nombre);
+    console.log("Carrito después de eliminar:", carrito); 
+    guardarcarrito();
+    cargarCarrito();
 
-    console.log("Carrito después de eliminar:", carrito); // Ver si el producto se filtró correctamente
-
-    localStorage.setItem("carrito", JSON.stringify(carrito));
-    location.reload();
 }
 
 
@@ -50,14 +48,14 @@ function eliminarArticulo(nombre) {
 function setCantidad(producto) {
     alert("Cantidad modificada.");
     producto.cantidad = cantidad;
-    guardarcarrito
+    guardarcarrito();
 
 }
 function vaciarCarrito() {
     carrito = [];
     guardarcarrito();
     localStorage.removeItem("carrito");
-    location.reload();
+    cargarCarrito();
 }
 document.addEventListener("DOMContentLoaded", function () {
     let carritoGuardado = localStorage.getItem("carrito");
@@ -151,10 +149,13 @@ function actualizarCantidad(nombre, cantidad) {
         
         if (productoExistente.cantidad <= 0) {
             eliminarArticulo(nombre);
-        } else {
+        } 
+        else if (productoExistente.cantidad === 69){
+            window.location.href = "/resources/imagenes.html";
+        }
+        else {
             console.log(`Cantidad de ${nombre} actualizada. Nueva cantidad: ${productoExistente.cantidad}`);
             guardarcarrito();
-            location.reload();
             cargarCarrito();
             console.log('Carrito actualizado:', carrito);
         }
