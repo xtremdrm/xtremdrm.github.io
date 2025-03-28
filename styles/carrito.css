@@ -92,6 +92,13 @@ body {
 }
 
 @media (max-width: 730px) {
+    h1{
+        font-size:45px !important;
+        text-align: center;
+        margin-top: 50px;
+        margin-left: 0;
+        margin-right: 0;
+    }
     .img{
         padding: 0;
     }
