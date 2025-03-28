@@ -16,6 +16,11 @@ class Cabecera extends HTMLElement {
                                 <i class="bi bi-bag fs-1"></i>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="pedidos.html" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="box">
+                                <i class="bi bi-box-seam fs-1"></i>
+                            </a>
+                        </li>
                         <li>
                             <a href="usuarios.html" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Orders">
                                 <i class="bi bi-person-circle fs-1"></i>
