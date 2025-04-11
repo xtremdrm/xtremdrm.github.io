@@ -1,4 +1,4 @@
-package demo.src.main;
+package tienda;
 import java.util.Date;
 
 public class Pedido {

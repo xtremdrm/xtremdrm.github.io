@@ -1,4 +1,4 @@
-package demo.src.main;
+package tienda;
 
 import java.sql.*;
 import java.util.logging.Level;

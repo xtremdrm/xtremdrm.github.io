@@ -1,4 +1,4 @@
-package demo.src.main;
+package tienda;
 public class Categoria {
     private int codigo;
     private String descripcion;

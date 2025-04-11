@@ -1,4 +1,4 @@
-package demo.src.main;
+package tienda;
 public class Producto {
     private int codigo;
     private String nombre;

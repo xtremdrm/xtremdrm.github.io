@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="demo.src.main.AccesoBD" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" import="tienda.AccesoBD" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
