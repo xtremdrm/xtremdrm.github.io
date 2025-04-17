@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="styles/register.css">
+    <title>Register Page</title>
+</head>
+<body>
+    <img src="resources/register_background.avif" class="background-image" alt="fondo">
+    <div class="register-form-container">
+        <h1 class="register-title">Registrarse</h1>
+        <form action="/submit_registration" method="post" class="register-form"></form>
+            <label for="name">Nombre</label>
+            <input type="text" id="name" name="name" required>
+            <label for="surname">Apellido</label>
+            <input type="text" id="surname" name="surname" required>
+            <label for="username">Nombre de usuario:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">Contraseña:</label>
+            <input type="password" id="password" name="password" required>
+            <label for="email">Correo electrónico:</label>
+            <input type="text" id="email" name="email" required>
+            <div class="login">
+                <label class="acc">¿Ya tienes una cuenta? <a href="/login.html">Iniciar sesión</a></label><br><br><br>
+            </div>
+            <input type="submit" onclick="window.location.href='login.html'" value="Registrarse">
+    </div>
+</body>
+</html>

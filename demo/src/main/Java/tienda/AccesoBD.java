@@ -67,4 +67,31 @@ public final class AccesoBD {
         abrirConexionBD();
         return conexionBD;
     }
+
+    public List<ProductoBD> obtenerProductosBD(int categoria) {
+	abrirConexionBD();
+	ArrayList<ProductoBD> productos = new ArrayList<>();
+
+	try {
+		String query = "SELECT codigo,nombre,precio,existencias,imagen,categoria,marca FROM productos;";
+		PreparedStatement s = conexionBD.prepareStatement(query);
+		s.setInt(1,categoria);
+		ResultSet resultado = s.executeQuery();
+		while(resultado.next()){
+			ProductoBD producto = new ProductoBD();
+			producto.setCodigo(resultado.getInt("codigo"));
+			producto.setNombre(resultado.getString("nombre"));
+			producto.setPrecio(resultado.getFloat("precio"));
+			producto.setStock(resultado.getInt("existencias"));
+			producto.setImagen(resultado.getString("imagen"));
+			producto.setCategoria(resultado.getInt("categoria"));
+            producto.setMarca(resultado.getInt("marca"));
+			productos.add(producto);
+		}
+	} catch(Exception e) {
+		System.err.println("Error ejecutando la consulta a la base de datos");
+		System.err.println(e.getMessage());
+	}
+	return productos;
+}
 }
