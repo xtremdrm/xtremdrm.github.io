@@ -6,8 +6,8 @@ public class Producto {
     private int existencias;
     private String imagen;
     private int kilometros;
-    private Marca marca;
-    private Categoria categoria;
+    private String marca;
+    private String categoria;
     public int getCodigo() {
         return codigo;
     }
@@ -56,19 +56,19 @@ public class Producto {
         this.kilometros = kilometros;
     }
 
-    public Marca getMarca() {
+    public String getMarca() {
         return marca;
     }
 
-    public void setMarca(Marca marca) {
+    public void setMarca(String marca) {
         this.marca = marca;
     }
 
-    public Categoria getCategoria() {
+    public String getCategoria() {
         return categoria;
     }
 
-    public void setCategoria(Categoria categoria) {
+    public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
 }

@@ -1,7 +1,5 @@
 tienda\AccesoBD.class
 tienda\Estado.class
-tienda\Marca.class
 tienda\Producto.class
-tienda\Categoria.class
 tienda\Usuario.class
 tienda\Pedido.class

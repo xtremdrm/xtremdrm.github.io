@@ -1,8 +1,10 @@
 package tienda;
-
+import tienda.Producto;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.ArrayList;
+import java.util.List;
 
 public final class AccesoBD {
 
@@ -68,24 +70,23 @@ public final class AccesoBD {
         return conexionBD;
     }
 
-    public List<ProductoBD> obtenerProductosBD(int categoria) {
+    public List<Producto> obtenerProductosBD(int categoria) {
 	abrirConexionBD();
-	ArrayList<ProductoBD> productos = new ArrayList<>();
-
+    List<Producto> productos = new ArrayList<>();
 	try {
 		String query = "SELECT codigo,nombre,precio,existencias,imagen,categoria,marca FROM productos;";
 		PreparedStatement s = conexionBD.prepareStatement(query);
 		s.setInt(1,categoria);
 		ResultSet resultado = s.executeQuery();
 		while(resultado.next()){
-			ProductoBD producto = new ProductoBD();
+			Producto producto = new Producto();
 			producto.setCodigo(resultado.getInt("codigo"));
 			producto.setNombre(resultado.getString("nombre"));
 			producto.setPrecio(resultado.getFloat("precio"));
-			producto.setStock(resultado.getInt("existencias"));
+			producto.setExistencias(resultado.getInt("existencias"));
 			producto.setImagen(resultado.getString("imagen"));
-			producto.setCategoria(resultado.getInt("categoria"));
-            producto.setMarca(resultado.getInt("marca"));
+			producto.setCategoria(resultado.getString("categoria"));
+            producto.setMarca(resultado.getString("marca"));
 			productos.add(producto);
 		}
 	} catch(Exception e) {
