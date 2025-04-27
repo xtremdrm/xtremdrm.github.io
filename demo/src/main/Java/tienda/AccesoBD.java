@@ -70,13 +70,13 @@ public final class AccesoBD {
         return conexionBD;
     }
 
-    public List<Producto> obtenerProductosBD(int categoria) {
+    public List<Producto> obtenerProductosBD() {
 	abrirConexionBD();
     List<Producto> productos = new ArrayList<>();
 	try {
-		String query = "SELECT codigo,nombre,precio,existencias,imagen,categoria,marca FROM productos;";
-		PreparedStatement s = conexionBD.prepareStatement(query);
-		s.setInt(1,categoria);
+		String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros FROM productos";
+        PreparedStatement s = conexionBD.prepareStatement(query);
+
 		ResultSet resultado = s.executeQuery();
 		while(resultado.next()){
 			Producto producto = new Producto();
@@ -86,7 +86,35 @@ public final class AccesoBD {
 			producto.setExistencias(resultado.getInt("existencias"));
 			producto.setImagen(resultado.getString("imagen"));
 			producto.setCategoria(resultado.getString("categoria"));
-            producto.setMarca(resultado.getString("marca"));
+            producto.setKilometros(resultado.getInt("kilometros"));
+			productos.add(producto);
+		}
+	} catch(Exception e) {
+		System.err.println("Error ejecutando la consulta a la base de datos");
+		System.err.println(e.getMessage());
+	}
+	return productos;
+}
+
+
+public List<Producto> obtenerProductosBDFiltro(String categoria) {
+	abrirConexionBD();
+    List<Producto> productos = new ArrayList<>();
+	try {
+		String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros FROM productos WHERE categoria = ?;";
+        PreparedStatement s = conexionBD.prepareStatement(query);
+        s.setString(1, categoria);
+
+		ResultSet resultado = s.executeQuery();
+		while(resultado.next()){
+			Producto producto = new Producto();
+			producto.setCodigo(resultado.getInt("codigo"));
+			producto.setNombre(resultado.getString("nombre"));
+			producto.setPrecio(resultado.getFloat("precio"));
+			producto.setExistencias(resultado.getInt("existencias"));
+			producto.setImagen(resultado.getString("imagen"));
+			producto.setCategoria(resultado.getString("categoria"));
+            producto.setKilometros(resultado.getInt("kilometros"));
 			productos.add(producto);
 		}
 	} catch(Exception e) {

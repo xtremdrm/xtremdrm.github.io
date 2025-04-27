@@ -20,19 +20,43 @@
   </properties>
 
   <dependencies>
+    <!-- Dependencia de JUnit para pruebas -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
-      <scope>test</scope>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>4.11</version>
+        <scope>test</scope>
     </dependency>
+
+    <!-- Dependencia de Servlet para Jakarta EE 9+ -->
     <dependency>
-    <groupId>jakarta.servlet</groupId>
-    <artifactId>jakarta.servlet-api</artifactId>
-    <version>6.0.0</version>
-    <scope>provided</scope>
-</dependency>
-  </dependencies>
+        <groupId>jakarta.servlet</groupId>
+        <artifactId>jakarta.servlet-api</artifactId>
+        <version>6.0.0</version>
+        <scope>provided</scope>
+    </dependency>
+
+    <!-- Dependencia de JSTL para Jakarta EE -->
+    <dependency>
+        <groupId>jakarta.servlet.jsp.jstl</groupId>
+        <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+        <version>3.0.0</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.glassfish.web</groupId>
+        <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+        <version>3.0.1</version>
+    </dependency>
+
+    <!-- Dependencia de Tomcat Jasper para la compatibilidad con JSP -->
+    <dependency>
+        <groupId>org.apache.tomcat</groupId>
+        <artifactId>tomcat-jasper</artifactId>
+        <version>10.1.0</version> <!-- Compatible con jakarta.servlet:6 -->
+    </dependency>
+</dependencies>
+
 
   <build>
     <finalName>demo</finalName>

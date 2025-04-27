@@ -4,4 +4,13 @@
 
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+    <servlet-name>jsp</servlet-name>
+    <jsp-file>/catalogo.jsp</jsp-file>
+</servlet>
+<servlet-mapping>
+    <servlet-name>jsp</servlet-name>
+    <url-pattern>/catalogo.jsp</url-pattern>
+</servlet-mapping>
+
 </web-app>
