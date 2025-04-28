@@ -23,7 +23,6 @@
             Tu navegador no soporta el elemento de video.
         </video>
         <div class="banner-text">
-            <h1> MB <br> MOTORS </h1>
         </div>
     </div>
 

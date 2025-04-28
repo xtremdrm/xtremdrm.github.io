@@ -26,6 +26,7 @@
                     <body>
                         <% AccesoBD con=AccesoBD.getInstance(); List<Producto> productos = con.obtenerProductosBD();
                             %>
+                            
                             <mi-cabecera></mi-cabecera>
                             <h1>NUESTRO <br> CATALOGO</h1>
                             <h3>Oferta de coches</h3>

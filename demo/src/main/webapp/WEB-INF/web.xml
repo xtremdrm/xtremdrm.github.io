@@ -2,15 +2,33 @@
  "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
  "http://java.sun.com/dtd/web-app_2_3.dtd" >
 
-<web-app>
+ <web-app>
   <display-name>Archetype Created Web Application</display-name>
-  <servlet>
-    <servlet-name>jsp</servlet-name>
-    <jsp-file>/catalogo.jsp</jsp-file>
-</servlet>
-<servlet-mapping>
-    <servlet-name>jsp</servlet-name>
-    <url-pattern>/catalogo.jsp</url-pattern>
-</servlet-mapping>
 
+  <servlet>
+    <servlet-name>catalogo</servlet-name>
+    <jsp-file>/catalogo.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>catalogo</servlet-name>
+    <url-pattern>/catalogo.jsp</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>audi</servlet-name>
+    <jsp-file>/audi.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>audi</servlet-name>
+    <url-pattern>/audi.jsp</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>bmw</servlet-name>
+    <jsp-file>/bmw.jsp</jsp-file>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>bmw</servlet-name>
+    <url-pattern>/bmw.jsp</url-pattern>
+  </servlet-mapping>
 </web-app>

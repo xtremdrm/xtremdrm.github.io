@@ -12,17 +12,17 @@ class Cabecera extends HTMLElement {
                 <li class="submenu">
                     <a href="">Nuestras Gamas</a>
                     <ul class="dropdown">
-                        <li><a href="basic.html">Basic</a></li>
-                        <li><a href="mid.html">Mid</a></li>
-                        <li><a href="luxury.html">Luxury</a></li>
+                        <li><a href="basic.jsp">Basic</a></li>
+                        <li><a href="mid.jsp">Mid</a></li>
+                        <li><a href="luxury.jsp">Luxury</a></li>
                     </ul>
                 </li>
                 <li class="submenu">
                     <a href="#">Nuestras Marcas</a>
                     <ul class="dropdown">
-                        <li><a href="mercedes.html">Mercedes</a></li>
-                        <li><a href="audi.html">Audi</a></li>
-                        <li><a href="bmw.html">BMW</a></li>
+                        <li><a href="mercedes.jsp">Mercedes</a></li>
+                        <li><a href="audi.jsp">Audi</a></li>
+                        <li><a href="bmw.jsp">BMW</a></li>
                     </ul>
                 </li>
                 <li><a href="contacto.html">Contacto</a></li>

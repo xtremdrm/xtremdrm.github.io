@@ -31,7 +31,7 @@
         <button onclick="myFunction()" class="cat">Nuestros coches</button>
         <script>
             function myFunction() {
-                window.location.href = 'catalogo.html';
+                window.location.href = 'catalogo.jsp';
             }
         </script>
         <button class="prod" onclick="window.location.href='colecciones.html'">Nuestras Marcas</button>
