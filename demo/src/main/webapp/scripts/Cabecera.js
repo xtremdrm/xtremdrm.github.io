@@ -34,7 +34,7 @@ class Cabecera extends HTMLElement {
                 <button class="cart" onclick="window.location.href='carrito.html'">
                 <i class="bi bi-cart-dash"></i>
                 </button>
-                <button class="login" onclick="window.location.href='login.html'">
+                <button class="login" onclick="window.location.href='login.jsp'">
                 <i class="bi bi-person"></i>
                 </button>
             </div> 
@@ -57,9 +57,9 @@ class Cabecera extends HTMLElement {
                 </a>
                 <div class="collapse" id="gamasCollapse" data-bs-parent="#offcanvasMenu">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="basic.html">Basic</a></li>
-                        <li class="list-group-item"><a href="mid.html">Mid</a></li>
-                        <li class="list-group-item"><a href="luxury.html">Luxury</a></li>
+                        <li class="list-group-item"><a href="basic.jsp">Basic</a></li>
+                        <li class="list-group-item"><a href="mid.jsp">Mid</a></li>
+                        <li class="list-group-item"><a href="luxury.jsp">Luxury</a></li>
                     </ul>
                 </div>
             </li>
@@ -70,9 +70,9 @@ class Cabecera extends HTMLElement {
                 </a>
                 <div class="collapse" id="marcasCollapse" data-bs-parent="#offcanvasMenu">
                     <ul class="list-group">
-                        <li class="list-group-item"><a href="mercedes.html">Mercedes</a></li>
-                        <li class="list-group-item"><a href="audi.html">Audi</a></li>
-                        <li class="list-group-item"><a href="bmw.html">BMW</a></li>
+                        <li class="list-group-item"><a href="mercedes.jsp">Mercedes</a></li>
+                        <li class="list-group-item"><a href="audi.jsp">Audi</a></li>
+                        <li class="list-group-item"><a href="bmw.jsp">BMW</a></li>
                     </ul>
                 </div>
             </li>

@@ -1,4 +1,5 @@
 package tienda;
+
 import tienda.Producto;
 import java.sql.*;
 import java.util.logging.Level;
@@ -71,83 +72,128 @@ public final class AccesoBD {
     }
 
     public List<Producto> obtenerProductosBD() {
-	abrirConexionBD();
-    List<Producto> productos = new ArrayList<>();
-	try {
-		String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros FROM productos";
-        PreparedStatement s = conexionBD.prepareStatement(query);
+        abrirConexionBD();
+        List<Producto> productos = new ArrayList<>();
+        try {
+            String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros FROM productos";
+            PreparedStatement s = conexionBD.prepareStatement(query);
+            ResultSet resultado = s.executeQuery();
+            while (resultado.next()) {
+                Producto producto = new Producto();
+                producto.setCodigo(resultado.getInt("codigo"));
+                producto.setNombre(resultado.getString("nombre"));
+                producto.setPrecio(resultado.getFloat("precio"));
+                producto.setExistencias(resultado.getInt("existencias"));
+                producto.setImagen(resultado.getString("imagen"));
+                producto.setCategoria(resultado.getString("categoria"));
+                producto.setKilometros(resultado.getInt("kilometros"));
+                productos.add(producto);
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error ejecutando la consulta de productos", e);
+        }
+        return productos;
+    }
 
-		ResultSet resultado = s.executeQuery();
-		while(resultado.next()){
-			Producto producto = new Producto();
-			producto.setCodigo(resultado.getInt("codigo"));
-			producto.setNombre(resultado.getString("nombre"));
-			producto.setPrecio(resultado.getFloat("precio"));
-			producto.setExistencias(resultado.getInt("existencias"));
-			producto.setImagen(resultado.getString("imagen"));
-			producto.setCategoria(resultado.getString("categoria"));
-            producto.setKilometros(resultado.getInt("kilometros"));
-			productos.add(producto);
-		}
-	} catch(Exception e) {
-		System.err.println("Error ejecutando la consulta a la base de datos");
-		System.err.println(e.getMessage());
-	}
-	return productos;
-}
+    public List<Producto> obtenerProductosBDCategoria(String categoria) {
+        abrirConexionBD();
+        List<Producto> productos = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM productos WHERE categoria = ?";
+            PreparedStatement s = conexionBD.prepareStatement(query);
+            s.setString(1, categoria);
+            ResultSet resultado = s.executeQuery();
+            while (resultado.next()) {
+                Producto producto = new Producto();
+                producto.setCodigo(resultado.getInt("codigo"));
+                producto.setNombre(resultado.getString("nombre"));
+                producto.setPrecio(resultado.getFloat("precio"));
+                producto.setExistencias(resultado.getInt("existencias"));
+                producto.setImagen(resultado.getString("imagen"));
+                producto.setCategoria(resultado.getString("categoria"));
+                producto.setKilometros(resultado.getInt("kilometros"));
+                productos.add(producto);
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error ejecutando consulta por categoría", e);
+        }
+        return productos;
+    }
 
+    public List<Producto> obtenerProductosBDMarca(String marca) {
+        abrirConexionBD();
+        List<Producto> productos = new ArrayList<>();
+        try {
+            String query = "SELECT * FROM productos WHERE marca = ?";
+            PreparedStatement s = conexionBD.prepareStatement(query);
+            s.setString(1, marca);
+            ResultSet resultado = s.executeQuery();
+            while (resultado.next()) {
+                Producto producto = new Producto();
+                producto.setCodigo(resultado.getInt("codigo"));
+                producto.setNombre(resultado.getString("nombre"));
+                producto.setPrecio(resultado.getFloat("precio"));
+                producto.setExistencias(resultado.getInt("existencias"));
+                producto.setImagen(resultado.getString("imagen"));
+                producto.setCategoria(resultado.getString("categoria"));
+                producto.setKilometros(resultado.getInt("kilometros"));
+                producto.setMarca(resultado.getString("marca"));
+                productos.add(producto);
+            }
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Error ejecutando consulta por marca", e);
+        }
+        return productos;
+    }
 
-public List<Producto> obtenerProductosBDCategoria(String categoria) {
-	abrirConexionBD();
-    List<Producto> productos = new ArrayList<>();
-	try {
-		String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros FROM productos WHERE categoria = ?;";
-        PreparedStatement s = conexionBD.prepareStatement(query);
-        s.setString(1, categoria);
+ public Usuario obtenerUsuarioPorCredenciales(String usuario, String contrasenya) {
+        String query = "SELECT * FROM usuarios WHERE usuario = ? AND contrasenya = ?";
+        try (Connection conn = getConexionBD();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, usuario);
+            ps.setString(2, contrasenya);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Usuario user = new Usuario();
+                    user.setCodigo(rs.getInt("codigo"));
+                    user.setUsuario(rs.getString("usuario"));
+                    user.setContrasenya(rs.getString("contrasenya"));
+                    user.setActivo(rs.getInt("activo"));
+                    user.setAdmin(rs.getInt("admin"));
+                    user.setNombre(rs.getString("nombre"));
+                    user.setApellidos(rs.getString("apellidos"));
+                    user.setEmail(rs.getString("email"));
+                    user.setDomicilio(rs.getString("domicilio"));
+                    user.setCiudad(rs.getString("ciudad"));
+                    user.setTelefono(rs.getString("telefono"));
+                    return user;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
-		ResultSet resultado = s.executeQuery();
-		while(resultado.next()){
-			Producto producto = new Producto();
-			producto.setCodigo(resultado.getInt("codigo"));
-			producto.setNombre(resultado.getString("nombre"));
-			producto.setPrecio(resultado.getFloat("precio"));
-			producto.setExistencias(resultado.getInt("existencias"));
-			producto.setImagen(resultado.getString("imagen"));
-			producto.setCategoria(resultado.getString("categoria"));
-            producto.setKilometros(resultado.getInt("kilometros"));
-			productos.add(producto);
-		}
-	} catch(Exception e) {
-		System.err.println("Error ejecutando la consulta a la base de datos");
-		System.err.println(e.getMessage());
-	}
-	return productos;
-}
-public List<Producto> obtenerProductosBDMarca(String marca) {
-	abrirConexionBD();
-    List<Producto> productos = new ArrayList<>();
-	try {
-		String query = "SELECT codigo, nombre, precio, existencias, imagen, categoria, kilometros, marca FROM productos WHERE marca = ?;";
-        PreparedStatement s = conexionBD.prepareStatement(query);
-        s.setString(1, marca);
-
-		ResultSet resultado = s.executeQuery();
-		while(resultado.next()){
-			Producto producto = new Producto();
-			producto.setCodigo(resultado.getInt("codigo"));
-			producto.setNombre(resultado.getString("nombre"));
-			producto.setPrecio(resultado.getFloat("precio"));
-			producto.setExistencias(resultado.getInt("existencias"));
-			producto.setImagen(resultado.getString("imagen"));
-			producto.setCategoria(resultado.getString("categoria"));
-            producto.setKilometros(resultado.getInt("kilometros"));
-            producto.setMarca(resultado.getString("marca"));
-			productos.add(producto);
-		}
-	} catch(Exception e) {
-		System.err.println("Error ejecutando la consulta a la base de datos");
-		System.err.println(e.getMessage());
-	}
-	return productos;
-}
+    public boolean registrarUsuario(Usuario usuario) {
+        String query = "INSERT INTO usuarios (usuario, contrasenya, nombre, apellidos, email, domicilio, ciudad, telefono, activo, admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = getConexionBD();
+             PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, usuario.getUsuario());
+            ps.setString(2, usuario.getContrasenya());
+            ps.setString(3, usuario.getNombre());
+            ps.setString(4, usuario.getApellidos());
+            ps.setString(5, usuario.getEmail());
+            ps.setString(6, usuario.getDomicilio());
+            ps.setString(7, usuario.getCiudad());
+            ps.setString(8, usuario.getTelefono());
+            ps.setInt(9, usuario.getActivo());
+            ps.setInt(10, usuario.getAdmin());
+            int filas = ps.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

@@ -1,3 +1,4 @@
+tienda\RegisterServlet.class
 tienda\AccesoBD.class
 tienda\Estado.class
 tienda\Producto.class
