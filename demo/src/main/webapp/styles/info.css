@@ -1,0 +1,76 @@
+/* Fuente y estilo base */
+body {
+    font-family: 'Radley', serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    line-height: 1.6;
+}
+
+/* Encabezados */
+h1, h2 {
+    color: #ffffff;
+}
+
+/* Contenedor principal */
+.container {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+}
+
+/* Imágenes con estilo */
+.bannerimg {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+    transition: transform 0.3s ease;
+}
+
+.bannerimg:hover {
+    transform: scale(1.03);
+}
+
+/* Enlaces */
+a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #66b2ff;
+    text-decoration: underline;
+}
+
+/* Espaciado entre secciones */
+.row.mb-4 {
+    margin-bottom: 3rem !important;
+}
+
+/* Botones (si se agregan más adelante) */
+.btn {
+    background-color: #0d6efd;
+    color: #fff;
+    border: none;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+/* Personalización de cabecera y pie (si se desea) */
+mi-cabecera, mi-footer {
+    display: block;
+    background-color: #1a1a1a;
+    padding: 1rem 0;
+    color: #f0f0f0;
+    text-align: center;
+}
+
+/* Responsive imagen en móvil */
+@media (max-width: 768px) {
+    .bannerimg {
+        margin-bottom: 1rem;
+    }
+}

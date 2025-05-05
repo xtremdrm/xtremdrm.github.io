@@ -46,7 +46,7 @@
                                             </p>
                                             <% if (producto.getExistencias()> 0) { %>
                                                 <button class="carrito"
-                                                    onclick="anadirCarrito('<%= producto.getNombre() %>', <%= producto.getKilometros() %>, 1, '<%= producto.getImagen() %>')">Comprar</button>
+                                                    onclick="anadirCarrito('<%= producto.getNombre() %>', <%= producto.getPrecio() %>, 1, '<%= producto.getImagen() %>')">Comprar</button>
                                                 <% } else { %>
                                                     &nbsp;
                                                     <% } %>

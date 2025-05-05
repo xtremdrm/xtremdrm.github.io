@@ -41,7 +41,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <input type="password" placeholder="Inserte contraseña" name="password"
+                                <input type="password" placeholder="Inserte contrasenya" name="password"
                                     class="login__inputpassword" id="password" required><br>
                             </td>
                         </tr>
@@ -54,7 +54,7 @@
                 </div>
             </div>
             <div class="registerpanel">
-                <label>¿No tienes una cuenta?</label>
+                <label>No tienes una cuenta?</label>
                 <a href="register.jsp">Regístrate</a>
             </div>
         </form>

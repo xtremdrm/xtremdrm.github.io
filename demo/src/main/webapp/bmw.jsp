@@ -41,7 +41,7 @@
                     </p>
                     <% if (producto.getExistencias()> 0) { %>
                         <button class="carrito"
-                            onclick="anadirCarrito('<%= producto.getNombre() %>', <%= producto.getKilometros() %>, 1, '<%= producto.getImagen() %>')">Comprar</button>
+                            onclick="anadirCarrito('<%= producto.getNombre() %>', <%= producto.getPrecio() %>, 1, '<%= producto.getImagen() %>')">Comprar</button>
                         <% } else { %>
                             &nbsp;
                             <% } %>
@@ -49,8 +49,15 @@
                 <% } %>
         
         </div>
+        <div id="popup-overlay" class="popup-overlay">
+                                    <div id="popup" class="popup">
+                                        <p id="popup-message">Producto añadido al carrito</p>
+                                        <button onclick="cerrarPopup()">OK</button>
+                                    </div>
+                                </div>
     </div>
     <mi-footer></mi-footer>
+    <script src="scripts/carrito.js"></script>
     <script src="scripts/Cabecera.js"></script>
     <script src="scripts/Footer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
