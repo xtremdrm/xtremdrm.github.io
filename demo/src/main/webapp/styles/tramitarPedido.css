@@ -1,0 +1,89 @@
+body {
+    background-color: #161515 !important;
+    color: white;
+    font-family: 'Radley', serif;
+    padding-bottom: 250px;
+}
+
+.texto-carrito {
+    margin: 70px;
+    font-size: 70px;
+    font-weight: bold;
+    text-align: center;
+    color: white !important;
+    font-family: 'Rosarivo', serif;
+}
+
+.formulario-pedido {
+    background: linear-gradient(0deg, rgba(99, 99, 101, 0.9) 2%, rgba(0, 0, 0, 1) 100%);
+    padding: 40px;
+    border-radius: 15px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.formulario-pedido label {
+    display: block;
+    margin-top: 20px;
+    font-size: 18px;
+    font-family: 'Radley', serif;
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.formulario-pedido input,
+.formulario-pedido select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    background-color: white;
+    border: 2px solid white;
+    border-radius: 10px;
+    color: #161515; /* Texto oscuro */
+    font-size: 16px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.formulario-pedido input::placeholder {
+    color: #888;
+}
+
+.formulario-pedido input:focus,
+.formulario-pedido select:focus {
+    border-color: #0dcaf0; /* Azul clarito al hacer focus */
+    outline: none;
+}
+
+.btn-sec {
+    color: white;
+    background-color: transparent !important;
+    border: 2px solid white !important;
+    border-radius: 10px;
+    margin-top: 30px !important;
+    padding: 10px;
+    width: 100%;
+    font-size: 20px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.btn-sec:hover {
+    background-color: white !important;
+    color: black;
+}
+
+@media (max-width: 730px) {
+    .texto-carrito {
+        font-size: 45px !important;
+        margin: 50px 0;
+    }
+
+    .formulario-pedido {
+        padding: 20px;
+    }
+
+    .btn-sec {
+        font-size: 18px;
+        padding: 8px;
+    }
+}

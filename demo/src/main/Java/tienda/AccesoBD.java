@@ -143,35 +143,6 @@ public final class AccesoBD {
         return productos;
     }
 
- public Usuario obtenerUsuarioPorCredenciales(String usuario, String contrasenya) {
-        String query = "SELECT * FROM usuarios WHERE usuario = ? AND contrasenya = ?";
-        try (Connection conn = getConexionBD();
-             PreparedStatement ps = conn.prepareStatement(query)) {
-            ps.setString(1, usuario);
-            ps.setString(2, contrasenya);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Usuario user = new Usuario();
-                    user.setCodigo(rs.getInt("codigo"));
-                    user.setUsuario(rs.getString("usuario"));
-                    user.setContrasenya(rs.getString("contrasenya"));
-                    user.setActivo(rs.getInt("activo"));
-                    user.setAdmin(rs.getInt("admin"));
-                    user.setNombre(rs.getString("nombre"));
-                    user.setApellidos(rs.getString("apellidos"));
-                    user.setEmail(rs.getString("email"));
-                    user.setDomicilio(rs.getString("domicilio"));
-                    user.setCiudad(rs.getString("ciudad"));
-                    user.setTelefono(rs.getString("telefono"));
-                    return user;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public boolean registrarUsuario(Usuario usuario) {
         String query = "INSERT INTO usuarios (usuario, contrasenya, nombre, apellidos, email, domicilio, ciudad, telefono, activo, admin) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConexionBD();
@@ -241,6 +212,94 @@ public void actualizarUsuario(Usuario u) {
     } catch (SQLException e) {
         e.printStackTrace();
     }
+}
+public boolean insertarPedido(Pedido pedido) {
+    String sql = "INSERT INTO pedidos (persona, fecha, importe, estado) VALUES (?, ?, ?, ?)";
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+        // Usar el código del usuario (persona) en lugar de un objeto Usuario
+        ps.setInt(1, pedido.getPersona());  // Persona es un int (código de usuario)
+        ps.setDate(2, new java.sql.Date(pedido.getFecha().getTime()));
+        ps.setDouble(3, pedido.getImporte());
+        ps.setString(4, pedido.getEstado());
+
+        int filas = ps.executeUpdate();
+        if (filas == 0) {
+            return false;
+        }
+        try (ResultSet rs = ps.getGeneratedKeys()) {
+            if (rs.next()) {
+                pedido.setCodigo(rs.getInt(1));  // Asigna el código del pedido generado
+                return true;
+            }
+        }
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Error al insertar pedido", e);
+    }
+    return false;
+}
+
+public boolean insertarLineasPedido(Pedido pedido) {
+    String sql = "INSERT INTO linea_pedido (pedido_id, producto_id, cantidad) VALUES (?, ?, ?)";
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        for (LineaPedido linea : pedido.getLineas()) {
+            ps.setInt(1, pedido.getCodigo());  // Usamos el código del pedido
+            ps.setInt(2, linea.getProductoId());
+            ps.setInt(3, linea.getCantidad());
+            ps.addBatch();
+        }
+        ps.executeBatch();
+        return true;
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Error al insertar líneas de pedido", e);
+    }
+    return false;
+}
+
+
+public Usuario obtenerUsuarioPorCredenciales(String usuario, String contrasenya) {
+    String query = "SELECT * FROM usuarios WHERE usuario = ? AND contrasenya = ?";
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, usuario);
+        ps.setString(2, contrasenya);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                Usuario user = new Usuario();
+                user.setCodigo(rs.getInt("codigo"));
+                user.setUsuario(rs.getString("usuario"));
+                user.setContrasenya(rs.getString("contrasenya"));
+                user.setActivo(rs.getInt("activo"));
+                user.setAdmin(rs.getInt("admin"));
+                user.setNombre(rs.getString("nombre"));
+                user.setApellidos(rs.getString("apellidos"));
+                user.setEmail(rs.getString("email"));
+                user.setDomicilio(rs.getString("domicilio"));
+                user.setCiudad(rs.getString("ciudad"));
+                user.setTelefono(rs.getString("telefono"));
+                return user;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+public boolean actualizarStockProducto(int codigoProducto, int cantidadVendida) {
+    String sql = "UPDATE productos SET existencias = existencias - ? WHERE codigo = ?";
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+        ps.setInt(1, cantidadVendida);
+        ps.setInt(2, codigoProducto);
+        int filas = ps.executeUpdate();
+        return filas > 0;
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Error al actualizar stock", e);
+    }
+    return false;
 }
 
 }

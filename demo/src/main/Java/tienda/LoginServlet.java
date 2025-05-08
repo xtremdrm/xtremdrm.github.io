@@ -18,11 +18,20 @@ public class LoginServlet extends HttpServlet {
             if (usuario != null && usuario.getActivo() == 1) {
                 HttpSession session = request.getSession();
                 session.setAttribute("usuario", usuario);
-                response.sendRedirect("usuario.jsp");
+
+                // Redirección condicional si existe un destino guardado
+                String next = (String) session.getAttribute("next");
+                if (next != null && !next.isEmpty()) {
+                    session.removeAttribute("next"); // Limpiar para evitar reuso accidental
+                    response.sendRedirect(next);
+                } else {
+                    response.sendRedirect("usuario.jsp");
+                }
+
             } else {
                 // En login fallido usamos forward y mantenemos username
                 request.setAttribute("loginError", "Nombre de usuario o contraseña incorrectos");
-                request.setAttribute("lastUsername", username); // para rellenar campo al volver
+                request.setAttribute("lastUsername", username);
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
 

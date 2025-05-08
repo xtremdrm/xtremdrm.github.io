@@ -1,3 +1,5 @@
+tienda\LineaPedido.class
+tienda\ProcesarPedidoServlet.class
 tienda\ActualizarUsuarioServlet.class
 tienda\LogoutServlet.class
 tienda\AccesoBD.class

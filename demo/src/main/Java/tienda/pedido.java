@@ -1,14 +1,27 @@
 package tienda;
 import java.util.Date;
+import java.util.List;
 
 public class Pedido {
-    private int codigo;
-    private Usuario persona;
+    private int codigo; 
+    private int persona; 
     private Date fecha;
     private double importe;
     private String estado;
-    private Producto producto;
-    private int cantidad;
+    private List<LineaPedido> lineas;
+
+
+    public Pedido() {
+    }
+
+    public Pedido(int codigo, int persona, Date fecha, double importe, String estado, List<LineaPedido> lineas) {
+        this.codigo = codigo;
+        this.persona = persona;
+        this.fecha = fecha;
+        this.importe = importe;
+        this.estado = estado;
+        this.lineas = lineas;
+    }
 
     public int getCodigo() {
         return codigo;
@@ -18,11 +31,11 @@ public class Pedido {
         this.codigo = codigo;
     }
 
-    public Usuario getPersona() {
+    public int getPersona() {
         return persona;
     }
 
-    public void setPersona(Usuario persona) {
+    public void setPersona(int persona) {
         this.persona = persona;
     }
 
@@ -50,19 +63,11 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public Producto getProducto() {
-        return producto;
+    public List<LineaPedido> getLineas() {
+        return lineas;
     }
 
-    public void setProducto(Producto producto) {
-        this.producto = producto;
-    }
-
-    public int getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(int cantidad) {
-        this.cantidad = cantidad;
+    public void setLineas(List<LineaPedido> lineas) {
+        this.lineas = lineas;
     }
 }

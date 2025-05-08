@@ -67,7 +67,16 @@
 
                                     <div>
                                         <input type="submit" class="actualizar mb-4" value="Actualizar información">
-                                        <a href="LogoutServlet"><button type="button" class="mb-4 btn btn-danger">Cerrar Sesión</button></a>
+                                        <a href="pedidos.jsp" class="btn btn-primary mb-4">Ver mis pedidos</a>
+                                       <button type="button" class="mb-4 btn btn-danger" onclick="cerrarSesion()">Cerrar Sesión</button>
+
+                                        <script>
+                                            function cerrarSesion() {
+                                                localStorage.clear();
+                                                window.location.href = 'LogoutServlet';
+                                                }
+                                        </script>
+
                                     </div>
 
                                     <% if (request.getAttribute("error") != null) { %>

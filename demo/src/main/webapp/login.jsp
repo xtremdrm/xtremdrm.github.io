@@ -6,7 +6,6 @@
     <title>Login</title>
     <link rel="stylesheet" href="styles/login.css">
     <style>
-        /* Popup */
         #popupError {
             display: none;
             position: fixed;
@@ -87,18 +86,14 @@
     </div>
 
     <script>
-        // Mostrar popup si hay error
         <% if (request.getAttribute("loginError") != null) { %>
             document.addEventListener('DOMContentLoaded', function() {
                 document.getElementById('popupError').style.display = 'block';
-                // Auto-cerrar después de 3 segundos
                 setTimeout(function() {
                     document.getElementById('popupError').style.display = 'none';
                 }, 3000);
             });
         <% } %>
-
-        // Botón cerrar
         document.getElementById('closeBtn').addEventListener('click', function () {
             document.getElementById('popupError').style.display = 'none';
         });

@@ -20,7 +20,7 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <body>
-    <% AccesoBD con=AccesoBD.getInstance(); List<Producto> productos = con.obtenerProductosBDMarca('Audi');
+    <% AccesoBD con=AccesoBD.getInstance(); List<Producto> productos = con.obtenerProductosBDMarca("Audi");
         %>
     <mi-cabecera></mi-cabecera>
     <h1> <img src="resources/audi.svg" alt="Imagen 1" width="100px"> </h1>
