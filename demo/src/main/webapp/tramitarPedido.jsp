@@ -73,10 +73,10 @@
             return;
         }
 
-        // Incluir el carrito en los valores del formulario
+
         valores.carrito = carrito;
 
-        // Llamar a la función para enviar el carrito
+ 
         EnviarCarrito("ProcesarPedidoServlet", valores);
     });
 
@@ -91,7 +91,7 @@
         })
         .then(response => {
             if (response.ok) {
-                return response.json();  // Si la respuesta es JSON
+                return response.json(); 
             } else {
                 throw new Error('Error en la solicitud: ' + response.status);
             }
