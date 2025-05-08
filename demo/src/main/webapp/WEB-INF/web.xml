@@ -38,7 +38,14 @@
         <servlet-name>LogoutServlet</servlet-name>
         <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
-
+    <servlet>
+        <servlet-name>ActualizarUsuarioServlet</servlet-name>
+        <servlet-class>tienda.ActualizarUsuarioServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ActualizarUsuarioServlet</servlet-name>
+        <url-pattern>/ActualizarUsuarioServlet</url-pattern>
+    </servlet-mapping>
     <session-config>
         <session-timeout>60</session-timeout> 
     </session-config>

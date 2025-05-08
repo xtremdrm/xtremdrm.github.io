@@ -1,3 +1,4 @@
+tienda\ActualizarUsuarioServlet.class
 tienda\LogoutServlet.class
 tienda\AccesoBD.class
 tienda\Producto.class

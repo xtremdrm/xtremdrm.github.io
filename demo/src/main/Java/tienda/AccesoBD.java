@@ -211,4 +211,36 @@ public final class AccesoBD {
     return false;
 }
 
+
+public boolean existeOtroUsuarioConEmailOTelefono(String email, String telefono, String usuarioActual) {
+    String query = "SELECT COUNT(*) FROM usuarios WHERE (email = ? OR telefono = ?) AND usuario != ?";
+    try (Connection conn = getConexionBD(); PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, email);
+        ps.setString(2, telefono);
+        ps.setString(3, usuarioActual);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next() && rs.getInt(1) > 0) {
+            return true;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+public void actualizarUsuario(Usuario u) {
+    String query = "UPDATE usuarios SET nombre = ?, apellidos = ?, email = ?, domicilio = ?, ciudad = ?, telefono = ? WHERE usuario = ?";
+    try (Connection conn = getConexionBD(); PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, u.getNombre());
+        ps.setString(2, u.getApellidos());
+        ps.setString(3, u.getEmail());
+        ps.setString(4, u.getDomicilio());
+        ps.setString(5, u.getCiudad());
+        ps.setString(6, u.getTelefono());
+        ps.setString(7, u.getUsuario());
+        ps.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
+
 }
