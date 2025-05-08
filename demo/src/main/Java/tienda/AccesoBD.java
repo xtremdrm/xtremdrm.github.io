@@ -29,20 +29,17 @@ public final class AccesoBD {
     private AccesoBD() {
         abrirConexionBD();
     }
-
     public void abrirConexionBD() {
-        if (conexionBD == null) {
-            try {
-                Class.forName(JDBC_DRIVER);
-                conexionBD = DriverManager.getConnection(DB_URL, USER, PASS);
-                logger.info("Conexión establecida correctamente.");
-            } catch (ClassNotFoundException e) {
-                logger.log(Level.SEVERE, "No se encuentra el driver JDBC", e);
-            } catch (SQLException e) {
-                logger.log(Level.SEVERE, "No se ha podido conectar a la base de datos", e);
-            }
+    try {
+        if (conexionBD == null || conexionBD.isClosed()) {
+            Class.forName(JDBC_DRIVER);
+            conexionBD = DriverManager.getConnection(DB_URL, USER, PASS);
+            logger.info("Conexión establecida correctamente.");
         }
+    } catch (ClassNotFoundException | SQLException e) {
+        logger.log(Level.SEVERE, "No se ha podido conectar a la base de datos", e);
     }
+}
 
     public void cerrarConexionBD() {
         if (conexionBD != null) {
@@ -196,4 +193,22 @@ public final class AccesoBD {
         }
         return false;
     }
+
+    public boolean comprobarUsuarioExistente(String usuario, String telefono, String email) {
+    String query = "SELECT COUNT(*) FROM usuarios WHERE usuario = ? OR telefono = ? OR email = ?";
+    try (Connection conn = getConexionBD(); 
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setString(1, usuario);
+        ps.setString(2, telefono);
+        ps.setString(3, email);
+        ResultSet rs = ps.executeQuery();
+        if (rs.next() && rs.getInt(1) > 0) {
+            return true; // Ya existe un usuario con ese nombre, teléfono o correo
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 }

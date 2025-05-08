@@ -6,7 +6,7 @@ public class Pedido {
     private Usuario persona;
     private Date fecha;
     private double importe;
-    private Estado estado;
+    private String estado;
     private Producto producto;
     private int cantidad;
 
@@ -42,11 +42,11 @@ public class Pedido {
         this.importe = importe;
     }
 
-    public Estado getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(Estado estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 

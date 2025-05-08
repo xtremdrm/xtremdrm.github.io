@@ -1,11 +1,7 @@
 package tienda;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
 import java.io.IOException;
 
 public class RegisterServlet extends HttpServlet {
@@ -22,6 +18,17 @@ public class RegisterServlet extends HttpServlet {
         String ciudad = request.getParameter("ciudad");
         String telefono = request.getParameter("telefono");
 
+        // Acceso a la base de datos
+        AccesoBD accesoBD = AccesoBD.getInstance();
+
+        // Comprobamos si ya existe un usuario con el mismo nombre, teléfono o email
+        if (accesoBD.comprobarUsuarioExistente(usuario, telefono, email)) {
+            // Enviar el mensaje de error al JSP
+            request.setAttribute("errorMessage", "El nombre de usuario, correo electrónico o teléfono ya están en uso.");
+            request.getRequestDispatcher("registerpage.jsp").forward(request, response);
+            return;
+        }
+
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setUsuario(usuario);
         nuevoUsuario.setContrasenya(contrasenya);
@@ -34,14 +41,14 @@ public class RegisterServlet extends HttpServlet {
         nuevoUsuario.setActivo(1);
         nuevoUsuario.setAdmin(0);
 
-        AccesoBD accesoBD = AccesoBD.getInstance();
-
         boolean registrado = accesoBD.registrarUsuario(nuevoUsuario);
 
         if (registrado) {
             response.sendRedirect("login.jsp");
         } else {
-            response.sendRedirect("register.jsp?error=true");
+            // Si ocurre un error al registrar, reenviar con el mensaje de error
+            request.setAttribute("errorMessage", "Hubo un error al registrar el usuario.");
+            request.getRequestDispatcher("register.jsp").forward(request, response);
         }
     }
 }

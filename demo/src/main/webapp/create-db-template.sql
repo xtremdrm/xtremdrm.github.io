@@ -52,13 +52,12 @@ CREATE TABLE pedidos(
     persona INTEGER NOT NULL,
     fecha DATE DEFAULT(CURRENT_DATE),
     importe DECIMAL(10,2) DEFAULT 0,
-    estado INTEGER NOT NULL,
+    estado VARCHAR(20),
     codigo_producto INTEGER NOT NULL,
     cantidad INTEGER DEFAULT 1,
     PRIMARY KEY(codigo),
     FOREIGN KEY pedidopor(persona) REFERENCES usuarios(codigo),
-    FOREIGN KEY enestado(estado) REFERENCES estados(codigo));
-    FOREIGN KEY pedidoproducto(codigo_producto) REFERENCES productos(codigo);
+    FOREIGN KEY pedidoproducto(codigo_producto) REFERENCES productos(codigo));
 
 INSERT INTO marca(nombre) VALUES 
 ('Mercedes'), ('BMW'), ('Audi');

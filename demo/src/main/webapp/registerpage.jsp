@@ -1,11 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles/register.css">
-    <title>Register Page</title>
+    <title>Registro</title>
+    <script>
+    // Mostrar el popup con el mensaje de error
+    window.onload = function () {
+        const errorMessage = '<%= request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : "" %>';
+        if (errorMessage && errorMessage.trim() !== "") {
+            alert(errorMessage);  // Utilizamos un simple popup (alert)
+        }
+    };
+</script>
+
 </head>
+
 <body>
     <img src="resources/register_background.avif" class="background-image" alt="fondo">
     <div class="register-form-container">
@@ -36,10 +48,12 @@
             <input type="tel" id="telefono" name="telefono" required>
 
             <div class="login">
-                <label class="acc">¿Ya tienes una cuenta? <a href="login.html">Iniciar sesión</a></label><br><br><br>
+                <label class="acc">¿Ya tienes una cuenta? <a href="login.jsp">Iniciar sesión</a></label><br><br><br>
             </div>
             <input type="submit" value="Registrarse">
         </form>
     </div>
 </body>
+
 </html>
+

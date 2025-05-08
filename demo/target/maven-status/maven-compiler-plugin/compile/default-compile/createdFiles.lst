@@ -1,6 +1,5 @@
 tienda\LogoutServlet.class
 tienda\AccesoBD.class
-tienda\Estado.class
 tienda\Producto.class
 tienda\RegisterServlet.class
 tienda\LoginServlet.class

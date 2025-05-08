@@ -1,12 +1,14 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ page import="tienda.Usuario" %>
+<%@ page import="tienda.Usuario" %>
 <%
-  Usuario usuario = (Usuario) session.getAttribute("usuario");
-  if (usuario == null) {
-      response.sendRedirect("login.jsp");
-      return;
-  }
+    Usuario usuario = (Usuario) session.getAttribute("usuario");
+    if (usuario == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
 %>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -21,8 +23,7 @@
 </head>
 
 <body>
-    <mi-cabecera><mi-cabecera>
-
+    <mi-cabecera></mi-cabecera>
     <h1>Perfil de Usuario</h1>
     <div class="cont container py-5">
         <div class="row">
@@ -75,7 +76,10 @@
             </div> <!-- col-12 -->
         </div> <!-- row -->
     </div> <!-- container -->
-    <script src="scripts/Cabecera.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <mi-footer></mi-footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+    <script src="scripts/Footer.js" defer></script>
+    <script src="scripts/Cabecera.js" defer></script>
+    
 </body>
 </html>
