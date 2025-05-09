@@ -301,5 +301,128 @@ public boolean actualizarStockProducto(int codigoProducto, int cantidadVendida) 
     }
     return false;
 }
+// ✅ Devuelve un Producto dado su código
+public Producto obtenerProductoPorId(int codigo) {
+    String query = "SELECT * FROM productos WHERE codigo = ?";
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        ps.setInt(1, codigo);
+        try (ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                Producto producto = new Producto();
+                producto.setCodigo(rs.getInt("codigo"));
+                producto.setNombre(rs.getString("nombre"));
+                producto.setPrecio(rs.getFloat("precio"));
+                producto.setExistencias(rs.getInt("existencias"));
+                producto.setImagen(rs.getString("imagen"));
+                producto.setCategoria(rs.getString("categoria"));
+                producto.setKilometros(rs.getInt("kilometros"));
+                producto.setMarca(rs.getString("marca"));
+                return producto;
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return null;
+}
+public List<Pedido> obtenerPedidosPorUsuario(int codigoUsuario) {
+    List<Pedido> pedidos = new ArrayList<>();
+    String query = "SELECT * FROM pedidos WHERE persona = ?";  // ⬅️ Corrección: antes decía usuario
+
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+
+        ps.setInt(1, codigoUsuario);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Pedido pedido = new Pedido();
+                pedido.setCodigo(rs.getInt("codigo"));
+                pedido.setPersona(rs.getInt("persona"));  // sigue correcto
+                pedido.setImporte(rs.getDouble("importe"));
+                pedido.setFecha(rs.getDate("fecha"));
+                pedido.setEstado(rs.getString("estado"));
+                pedido.setDireccionEnvio(rs.getString("direccion_envio"));  // opcional
+
+                pedido.setLineas(obtenerLineasPedido(pedido.getCodigo()));
+
+                pedidos.add(pedido);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return pedidos;
+}
+
+private List<LineaPedido> obtenerLineasPedido(int pedidoCodigo) {
+    List<LineaPedido> lineas = new ArrayList<>();
+    String query = "SELECT * FROM linea_pedido WHERE pedido_id = ?";
+
+    try (Connection conn = getConexionBD();
+         PreparedStatement ps = conn.prepareStatement(query)) {
+
+        ps.setInt(1, pedidoCodigo);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                LineaPedido linea = new LineaPedido();
+                linea.setCodigo(rs.getInt("codigo"));
+                linea.setPedidoId(rs.getInt("pedido_id"));  // ✅ ahora correcto
+                linea.setProductoId(rs.getInt("producto_id"));  // ✅ ahora correcto
+                linea.setCantidad(rs.getInt("cantidad"));
+                lineas.add(linea);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return lineas;
+}
+
+public void eliminarPedidoPorId(int pedidoId) {
+    String deleteLineasSQL = "DELETE FROM linea_pedido WHERE pedido_id = ?";
+    String deletePedidoSQL = "DELETE FROM pedidos WHERE codigo = ?";  // Asegúrate de que la tabla sea "pedidos" y la clave sea "codigo"
+
+    try (Connection conn = getConexionBD();
+         PreparedStatement stmtLineas = conn.prepareStatement(deleteLineasSQL);
+         PreparedStatement stmtPedido = conn.prepareStatement(deletePedidoSQL)) {
+
+        // Eliminar las líneas del pedido primero (por FK)
+        stmtLineas.setInt(1, pedidoId);
+        stmtLineas.executeUpdate();
+
+        // Luego eliminar el pedido principal
+        stmtPedido.setInt(1, pedidoId);
+        stmtPedido.executeUpdate();
+
+    } catch (SQLException e) {
+        logger.log(Level.SEVERE, "Error al eliminar pedido", e);
+    }
+}
+public List<Producto> obtenerStockEliminado(int pedidoId) {
+    List<Producto> productosEliminados = new ArrayList<>();
+    String query = "SELECT p.codigo, p.nombre, lp.cantidad " +
+                   "FROM productos p " +
+                   "JOIN linea_pedido lp ON p.codigo = lp.producto_id " +
+                   "WHERE lp.pedido_id = ?";
+    try (Connection conn = getConexionBD(); 
+         PreparedStatement ps = conn.prepareStatement(query)) {
+        
+        ps.setInt(1, pedidoId);
+        try (ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Producto producto = new Producto();
+                producto.setCodigo(rs.getInt("codigo"));
+                producto.setNombre(rs.getString("nombre"));
+                producto.setExistencias(rs.getInt("cantidad")); // cantidad que se eliminaría
+                productosEliminados.add(producto);
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return productosEliminados;
+}
+
 
 }

@@ -1,0 +1,11 @@
+tienda\EliminarPedido.class
+tienda\LineaPedido.class
+tienda\ProcesarPedidoServlet.class
+tienda\ActualizarUsuarioServlet.class
+tienda\LogoutServlet.class
+tienda\AccesoBD.class
+tienda\Producto.class
+tienda\RegisterServlet.class
+tienda\LoginServlet.class
+tienda\Usuario.class
+tienda\Pedido.class
