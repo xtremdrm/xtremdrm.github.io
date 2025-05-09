@@ -9,6 +9,7 @@ public class Pedido {
     private double importe;
     private String estado;
     private List<LineaPedido> lineas;
+    private String direccionEnvio;
 
 
     public Pedido() {
@@ -70,4 +71,12 @@ public class Pedido {
     public void setLineas(List<LineaPedido> lineas) {
         this.lineas = lineas;
     }
+
+    public String getDireccionEnvio() {
+        return direccionEnvio;
+    }
+
+public void setDireccionEnvio(String direccionEnvio) {
+    this.direccionEnvio = direccionEnvio;
+}
 }

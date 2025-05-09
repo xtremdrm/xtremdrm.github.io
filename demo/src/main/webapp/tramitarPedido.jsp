@@ -28,7 +28,7 @@
     <h1 class="texto-carrito">Tramitar Pedido</h1>
 
     <div class="container formulario-pedido">
-        <form id= "miFormulario" action="ProcesarPedidoServlet" method="post">
+        <form id="miFormulario" action="ProcesarPedidoServlet" method="post">
             <label for="direccion">Dirección de Envío:</label>
             <input type="text" name="direccion" id="direccion" required>
 
@@ -49,64 +49,95 @@
             <label for="comentarios">Comentarios:</label>
             <input type="text" name="comentarios" id="comentarios" placeholder="Opcional">
             <button type="submit" class="btn-sec">Finalizar Compra</button>
+            <div id="pago-extra"></div>
+
         </form>
     </div>
 
     <mi-footer></mi-footer>
     <script>
-    document.getElementById("miFormulario").addEventListener("submit", function(event) {
-        event.preventDefault();  // Evita el envío por defecto del formulario
+        // Asegurarnos de que el DOM esté completamente cargado antes de ejecutar el script
+        document.addEventListener("DOMContentLoaded", function() {
 
-        // Recoger los valores del formulario
-        const valores = {
-            direccion: document.getElementById("direccion").value,
-            ciudad: document.getElementById("ciudad").value,
-            cp: document.getElementById("cp").value,
-            pago: document.getElementById("pago").value,
-            comentarios: document.getElementById("comentarios").value
-        };
+            // Manejo del envío del formulario
+            document.getElementById("miFormulario").addEventListener("submit", function(event) {
+                event.preventDefault();  // Evita el envío por defecto del formulario
 
-        // Obtener el carrito desde el localStorage
-        const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
-        if (carrito.length === 0) {
-            alert("Tu carrito está vacío.");
-            return;
-        }
+                // Recoger los valores del formulario
+                const valores = {
+                    direccion: document.getElementById("direccion").value,
+                    ciudad: document.getElementById("ciudad").value,
+                    cp: document.getElementById("cp").value,
+                    pago: document.getElementById("pago").value,
+                    comentarios: document.getElementById("comentarios").value
+                };
 
+                // Obtener el carrito desde el localStorage
+                const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
+                if (carrito.length === 0) {
+                    alert("Tu carrito está vacío.");
+                    return;
+                }
 
-        valores.carrito = carrito;
+                // Crear el objeto de datos
+                const datos = {
+                    direccion: document.getElementById("direccion").value,
+                    ciudad: document.getElementById("ciudad").value,
+                    cp: document.getElementById("cp").value,
+                    productos: carrito
+                };
 
- 
-        EnviarCarrito("ProcesarPedidoServlet", valores);
-    });
+                // Enviar los datos al servidor
+                EnviarCarrito("ProcesarPedidoServlet", datos);
+            });
 
-    function EnviarCarrito(url, datos) {
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(datos),
-            credentials: 'include'
-        })
-        .then(response => {
-            if (response.ok) {
-                return response.json(); 
-            } else {
-                throw new Error('Error en la solicitud: ' + response.status);
+            // Función para enviar el carrito
+            function EnviarCarrito(url, datos) {
+                const options = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=utf-8"
+                    },
+                    body: JSON.stringify(datos)
+                };
+
+                fetch(url, options)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.body.innerHTML = data;
+                    })
+                    .catch(error => console.error(error));
             }
-        })
-        .then(data => {
-            console.log('Pedido procesado:', data);
-            // Limpia carrito
-            localStorage.removeItem("carrito");
-            // Redirige al pedido finalizado
-            window.location.href = "pedidoFinalizado.jsp?cod=" + data.codPedido;
-        })
-        .catch(error => {
-            console.error('Error:', error);
+
+            // Detectar cambio en el método de pago y mostrar campos adicionales
+            document.getElementById("pago").addEventListener("change", function () {
+                const metodo = this.value;
+                const contenedor = document.getElementById("pago-extra");
+                contenedor.innerHTML = "";  // Limpia inputs anteriores
+
+                if (metodo === "tarjeta") {
+                    contenedor.innerHTML = `
+                        <label for="numTarjeta">Número de Tarjeta:</label>
+                        <input type="text" id="numTarjeta" name="numTarjeta" required pattern="[0-9]{16}" title="Debe tener 16 dígitos">
+
+                        <label for="caducidad">Fecha de Caducidad:</label>
+                        <input type="month" id="caducidad" name="caducidad" required>
+
+                        <label for="cvv">CVV:</label>
+                        <input type="text" id="cvv" name="cvv" required pattern="[0-9]{3}" title="3 dígitos">
+                    `;
+                } else if (metodo === "paypal") {
+                    contenedor.innerHTML = `
+                        <label for="correoPaypal">Correo de PayPal:</label>
+                        <input type="email" id="correoPaypal" name="correoPaypal" required>
+                    `;
+                } else if (metodo === "transferencia") {
+                    contenedor.innerHTML = `
+                        <p>Se mostrarán los datos bancarios al finalizar el pedido.</p>
+                    `;
+                }
+            });
         });
-    }
     </script>
     <script src="scripts/carrito.js"></script>
     <script src="scripts/Cabecera.js"></script>

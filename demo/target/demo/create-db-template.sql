@@ -107,6 +107,10 @@ INSERT INTO `usuarios` (`codigo`, `usuario`, `contrasenya`, `activo`, `admin`, `
 	(2, 'Jamongus', '12345', 1, 0, 'Manuel', 'Jamongus', '13 Rue del Percebe', 'Real Sociedad', '697522117', 'jamongus@jamongus.com'),
 	(6, 'Xx_El_m0riTO_xX', '12345', 1, 0, 'Carlos', 'Macian Gomez', '13 Rue del Percebe', 'Osasuna', '663255897', 'mariconchi@outlook.es');
 
+
+
+ALTER TABLE pedidos ADD COLUMN direccion_envio VARCHAR(255);
+
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;

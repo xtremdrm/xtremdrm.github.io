@@ -32,6 +32,13 @@
                             <div class="col-lg-9">
                                 <div class="p-4">
                                     <div class="mb-4">
+                                        <% if ( session.getAttribute("new_pedido") != null) {
+                                    %>
+                                            <div class="alert alert-success"><%=session.getAttribute("new_pedido")%></div>
+                                    <%
+                                            session.removeAttribute("new_pedido");
+                                        }
+                                    %>
                                         <h5 class="mb-4">Datos de usuario</h5>
                                         <div class="row g-3">
                                             <div class="col-md-6">
@@ -67,8 +74,8 @@
 
                                     <div>
                                         <input type="submit" class="actualizar mb-4" value="Actualizar información">
-                                        <a href="pedidos.jsp" class="btn btn-primary mb-4">Ver mis pedidos</a>
-                                       <button type="button" class="mb-4 btn btn-danger" onclick="cerrarSesion()">Cerrar Sesión</button>
+                                        <a href="pedidos.jsp" class="actualizar btn btn-primary mb-4">Ver mis pedidos</a>
+                                       <button type="button" class="actualizar mb-4 btn btn-danger" onclick="cerrarSesion()">Cerrar Sesión</button>
 
                                         <script>
                                             function cerrarSesion() {
@@ -80,7 +87,7 @@
                                     </div>
 
                                     <% if (request.getAttribute("error") != null) { %>
-                                        <div class="alert alert-danger"><%= request.getAttribute("error") %></div>
+                                            <div class="alert alert-danger"><%= request.getAttribute("error") %></div>
                                     <% } %>
 
                                 </div>
