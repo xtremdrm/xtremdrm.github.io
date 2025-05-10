@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="styles/register.css">
     <title>Registro</title>
     <script>
-    // Mostrar el popup con el mensaje de error
+
     window.onload = function () {
         const errorMessage = '<%= request.getAttribute("errorMessage") != null ? request.getAttribute("errorMessage") : "" %>';
         if (errorMessage && errorMessage.trim() !== "") {
-            alert(errorMessage);  // Utilizamos un simple popup (alert)
+            alert(errorMessage);  
         }
     };
 </script>

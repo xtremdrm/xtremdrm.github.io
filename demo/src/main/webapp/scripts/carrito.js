@@ -102,7 +102,7 @@ function cargarCarrito() {
     let total = 0;
     let carritoHTML = "";
 
-    // Aquí añades tus productos al carrito
+
     for (let producto of carrito) {
         carritoHTML += montarProducto(producto.nombre, producto.precio, producto.existencias, producto.foto);
         total += producto.precio * producto.existencias;

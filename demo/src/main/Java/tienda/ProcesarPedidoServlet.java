@@ -17,7 +17,7 @@ public class ProcesarPedidoServlet extends HttpServlet {
                 new InputStreamReader(
                         request.getInputStream(), "utf-8"));
 
-        // Cambios mínimos para extraer dirección
+
         JsonValue rootValue = jsonReader.readValue();
 
         JsonArray jobj;
@@ -32,11 +32,11 @@ public class ProcesarPedidoServlet extends HttpServlet {
             cp = data.getString("cp", "");
             jobj = data.getJsonArray("productos");
         } else {
-            jobj = rootValue.asJsonArray(); // formato anterior, por compatibilidad
+            jobj = rootValue.asJsonArray();
         }
 
         try {
-            // Usuario logueado
+
             HttpSession sesion = request.getSession();
             Usuario usuario = (Usuario) sesion.getAttribute("usuario");
             if (usuario == null) {
@@ -44,16 +44,13 @@ public class ProcesarPedidoServlet extends HttpServlet {
                 return;
             }
 
-            // Conexión a BD
             AccesoBD accesoBD = AccesoBD.getInstance();
             Connection con = accesoBD.getConexionBD();
-
-            // Insertar pedido (cabecera) - dirección concatenada como un solo string
             String direccionCompleta = direccion + ", " + ciudad + ", " + cp;
             String sqlPedido = "INSERT INTO pedidos (persona, fecha, importe, estado, direccion_envio) VALUES (?, CURRENT_DATE, 0, 'Pendiente', ?)";
             PreparedStatement psPedido = con.prepareStatement(sqlPedido, Statement.RETURN_GENERATED_KEYS);
             psPedido.setInt(1, usuario.getCodigo());
-            psPedido.setString(2, direccionCompleta);  // Direccion concatenada
+            psPedido.setString(2, direccionCompleta);
             psPedido.executeUpdate();
 
             ResultSet rs = psPedido.getGeneratedKeys();
@@ -62,7 +59,6 @@ public class ProcesarPedidoServlet extends HttpServlet {
                 codPedido = rs.getInt(1);
             }
 
-            // Insertar líneas del pedido
             String sqlLinea = "INSERT INTO linea_pedido (pedido_id, producto_id, cantidad) VALUES (?, ?, ?)";
             PreparedStatement psLinea = con.prepareStatement(sqlLinea);
 
@@ -89,8 +85,6 @@ public class ProcesarPedidoServlet extends HttpServlet {
                 psLinea.addBatch();
 
                 total += precio * cantidad;
-
-                // Actualizar existencias
                 String sqlStock = "UPDATE productos SET existencias = existencias - ? WHERE codigo = ?";
                 PreparedStatement psStock = con.prepareStatement(sqlStock);
                 psStock.setInt(1, cantidad);
@@ -99,14 +93,14 @@ public class ProcesarPedidoServlet extends HttpServlet {
             }
             psLinea.executeBatch();
 
-            // Actualizar importe total
+
             String sqlUpdate = "UPDATE pedidos SET importe = ? WHERE codigo = ?";
             PreparedStatement psUpdate = con.prepareStatement(sqlUpdate);
             psUpdate.setDouble(1, total);
             psUpdate.setInt(2, codPedido);
             psUpdate.executeUpdate();
 
-            // Mensaje y redirección
+
             String new_pedido = " El pedido de ID: " + codPedido + " e importe total: " + total + " ha sido procesado correctamente";
             sesion.setAttribute("new_pedido", new_pedido);
             RequestDispatcher rd = request.getRequestDispatcher("/usuario.jsp");

@@ -13,8 +13,8 @@
         return;
     }
 
-    AccesoBD db = AccesoBD.getInstance();  // Usamos getInstance() ya que constructor no es público
-    List<Pedido> pedidos = db.obtenerPedidosPorUsuario(usuario.getCodigo());  // getCodigo()
+    AccesoBD db = AccesoBD.getInstance(); 
+    List<Pedido> pedidos = db.obtenerPedidosPorUsuario(usuario.getCodigo()); 
 
     double total = 0;
     for (Pedido pedido : pedidos) {

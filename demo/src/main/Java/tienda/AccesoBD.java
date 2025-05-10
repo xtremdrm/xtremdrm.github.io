@@ -174,7 +174,7 @@ public final class AccesoBD {
         ps.setString(3, email);
         ResultSet rs = ps.executeQuery();
         if (rs.next() && rs.getInt(1) > 0) {
-            return true; // Ya existe un usuario con ese nombre, teléfono o correo
+            return true;
         }
     } catch (SQLException e) {
         e.printStackTrace();
@@ -218,8 +218,7 @@ public boolean insertarPedido(Pedido pedido) {
     try (Connection conn = getConexionBD();
          PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        // Usar el código del usuario (persona) en lugar de un objeto Usuario
-        ps.setInt(1, pedido.getPersona());  // Persona es un int (código de usuario)
+        ps.setInt(1, pedido.getPersona()); 
         ps.setDate(2, new java.sql.Date(pedido.getFecha().getTime()));
         ps.setDouble(3, pedido.getImporte());
         ps.setString(4, pedido.getEstado());
@@ -230,7 +229,7 @@ public boolean insertarPedido(Pedido pedido) {
         }
         try (ResultSet rs = ps.getGeneratedKeys()) {
             if (rs.next()) {
-                pedido.setCodigo(rs.getInt(1));  // Asigna el código del pedido generado
+                pedido.setCodigo(rs.getInt(1)); 
                 return true;
             }
         }
@@ -246,7 +245,7 @@ public boolean insertarLineasPedido(Pedido pedido) {
          PreparedStatement ps = conn.prepareStatement(sql)) {
 
         for (LineaPedido linea : pedido.getLineas()) {
-            ps.setInt(1, pedido.getCodigo());  // Usamos el código del pedido
+            ps.setInt(1, pedido.getCodigo());  
             ps.setInt(2, linea.getProductoId());
             ps.setInt(3, linea.getCantidad());
             ps.addBatch();
@@ -301,7 +300,6 @@ public boolean actualizarStockProducto(int codigoProducto, int cantidadVendida) 
     }
     return false;
 }
-// ✅ Devuelve un Producto dado su código
 public Producto obtenerProductoPorId(int codigo) {
     String query = "SELECT * FROM productos WHERE codigo = ?";
     try (Connection conn = getConexionBD();
@@ -328,7 +326,7 @@ public Producto obtenerProductoPorId(int codigo) {
 }
 public List<Pedido> obtenerPedidosPorUsuario(int codigoUsuario) {
     List<Pedido> pedidos = new ArrayList<>();
-    String query = "SELECT * FROM pedidos WHERE persona = ?";  // ⬅️ Corrección: antes decía usuario
+    String query = "SELECT * FROM pedidos WHERE persona = ?"; 
 
     try (Connection conn = getConexionBD();
          PreparedStatement ps = conn.prepareStatement(query)) {
@@ -338,11 +336,11 @@ public List<Pedido> obtenerPedidosPorUsuario(int codigoUsuario) {
             while (rs.next()) {
                 Pedido pedido = new Pedido();
                 pedido.setCodigo(rs.getInt("codigo"));
-                pedido.setPersona(rs.getInt("persona"));  // sigue correcto
+                pedido.setPersona(rs.getInt("persona"));  
                 pedido.setImporte(rs.getDouble("importe"));
                 pedido.setFecha(rs.getDate("fecha"));
                 pedido.setEstado(rs.getString("estado"));
-                pedido.setDireccionEnvio(rs.getString("direccion_envio"));  // opcional
+                pedido.setDireccionEnvio(rs.getString("direccion_envio"));
 
                 pedido.setLineas(obtenerLineasPedido(pedido.getCodigo()));
 
@@ -367,8 +365,8 @@ private List<LineaPedido> obtenerLineasPedido(int pedidoCodigo) {
             while (rs.next()) {
                 LineaPedido linea = new LineaPedido();
                 linea.setCodigo(rs.getInt("codigo"));
-                linea.setPedidoId(rs.getInt("pedido_id"));  // ✅ ahora correcto
-                linea.setProductoId(rs.getInt("producto_id"));  // ✅ ahora correcto
+                linea.setPedidoId(rs.getInt("pedido_id"));  
+                linea.setProductoId(rs.getInt("producto_id")); 
                 linea.setCantidad(rs.getInt("cantidad"));
                 lineas.add(linea);
             }
@@ -381,17 +379,13 @@ private List<LineaPedido> obtenerLineasPedido(int pedidoCodigo) {
 
 public void eliminarPedidoPorId(int pedidoId) {
     String deleteLineasSQL = "DELETE FROM linea_pedido WHERE pedido_id = ?";
-    String deletePedidoSQL = "DELETE FROM pedidos WHERE codigo = ?";  // Asegúrate de que la tabla sea "pedidos" y la clave sea "codigo"
+    String deletePedidoSQL = "DELETE FROM pedidos WHERE codigo = ?"; 
 
     try (Connection conn = getConexionBD();
          PreparedStatement stmtLineas = conn.prepareStatement(deleteLineasSQL);
          PreparedStatement stmtPedido = conn.prepareStatement(deletePedidoSQL)) {
-
-        // Eliminar las líneas del pedido primero (por FK)
         stmtLineas.setInt(1, pedidoId);
         stmtLineas.executeUpdate();
-
-        // Luego eliminar el pedido principal
         stmtPedido.setInt(1, pedidoId);
         stmtPedido.executeUpdate();
 
@@ -414,7 +408,7 @@ public List<Producto> obtenerStockEliminado(int pedidoId) {
                 Producto producto = new Producto();
                 producto.setCodigo(rs.getInt("codigo"));
                 producto.setNombre(rs.getString("nombre"));
-                producto.setExistencias(rs.getInt("cantidad")); // cantidad que se eliminaría
+                producto.setExistencias(rs.getInt("cantidad"));
                 productosEliminados.add(producto);
             }
         }
