@@ -97,6 +97,7 @@
                 fetch(url, options)
                     .then(response => response.text())
                     .then(data => {
+                        localStorage.removeItem("carrito");
                         document.body.innerHTML = data;
                     })
                     .catch(error => console.error(error));

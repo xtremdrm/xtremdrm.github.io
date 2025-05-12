@@ -10,7 +10,6 @@
             response.sendRedirect("usuario.jsp");
         }
     } else {
-        // Guardar el destino para después del login
         if (next != null && !next.isEmpty()) {
             session.setAttribute("next", next);
         }

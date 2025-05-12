@@ -56,14 +56,11 @@
 
     <mi-footer></mi-footer>
     <script>
-        // Asegurarnos de que el DOM esté completamente cargado antes de ejecutar el script
         document.addEventListener("DOMContentLoaded", function() {
 
-            // Manejo del envío del formulario
             document.getElementById("miFormulario").addEventListener("submit", function(event) {
-                event.preventDefault();  // Evita el envío por defecto del formulario
+                event.preventDefault(); 
 
-                // Recoger los valores del formulario
                 const valores = {
                     direccion: document.getElementById("direccion").value,
                     ciudad: document.getElementById("ciudad").value,
@@ -72,14 +69,12 @@
                     comentarios: document.getElementById("comentarios").value
                 };
 
-                // Obtener el carrito desde el localStorage
+
                 const carrito = JSON.parse(localStorage.getItem("carrito")) || [];
                 if (carrito.length === 0) {
                     alert("Tu carrito está vacío.");
                     return;
                 }
-
-                // Crear el objeto de datos
                 const datos = {
                     direccion: document.getElementById("direccion").value,
                     ciudad: document.getElementById("ciudad").value,
@@ -87,11 +82,9 @@
                     productos: carrito
                 };
 
-                // Enviar los datos al servidor
                 EnviarCarrito("ProcesarPedidoServlet", datos);
             });
 
-            // Función para enviar el carrito
             function EnviarCarrito(url, datos) {
                 const options = {
                     method: "POST",
@@ -104,16 +97,16 @@
                 fetch(url, options)
                     .then(response => response.text())
                     .then(data => {
+                        localStorage.removeItem("carrito");
                         document.body.innerHTML = data;
                     })
                     .catch(error => console.error(error));
             }
 
-            // Detectar cambio en el método de pago y mostrar campos adicionales
             document.getElementById("pago").addEventListener("change", function () {
                 const metodo = this.value;
                 const contenedor = document.getElementById("pago-extra");
-                contenedor.innerHTML = "";  // Limpia inputs anteriores
+                contenedor.innerHTML = "";
 
                 if (metodo === "tarjeta") {
                     contenedor.innerHTML = `

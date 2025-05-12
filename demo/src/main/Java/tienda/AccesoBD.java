@@ -417,6 +417,4 @@ public List<Producto> obtenerStockEliminado(int pedidoId) {
     }
     return productosEliminados;
 }
-
-
 }

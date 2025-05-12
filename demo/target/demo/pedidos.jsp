@@ -13,8 +13,8 @@
         return;
     }
 
-    AccesoBD db = AccesoBD.getInstance();  // Usamos getInstance() ya que constructor no es público
-    List<Pedido> pedidos = db.obtenerPedidosPorUsuario(usuario.getCodigo());  // getCodigo()
+    AccesoBD db = AccesoBD.getInstance(); 
+    List<Pedido> pedidos = db.obtenerPedidosPorUsuario(usuario.getCodigo()); 
 
     double total = 0;
     for (Pedido pedido : pedidos) {
@@ -47,7 +47,7 @@
     %>
 <h3>
     Pedido Nº <%= pedido.getCodigo() %> - Estado: <%= pedido.getEstado() %> - Fecha: <%= pedido.getFecha() %>
-    <% if (!pedido.getEstado().equalsIgnoreCase("Enviado") && !pedido.getEstado().equalsIgnoreCase("Recibido")) { %>
+    <% if (pedido.getEstado().equalsIgnoreCase("Pendiente")) { %>
         <form action="EliminarPedido" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">
                 <input type="hidden" name="idPedido" value="<%= pedido.getCodigo() %>">
                 <button type="submit" class="btn btn-sm btn-outline-danger ms-3" title="Eliminar pedido">

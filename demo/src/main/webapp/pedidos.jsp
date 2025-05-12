@@ -47,7 +47,7 @@
     %>
 <h3>
     Pedido Nº <%= pedido.getCodigo() %> - Estado: <%= pedido.getEstado() %> - Fecha: <%= pedido.getFecha() %>
-    <% if (!pedido.getEstado().equalsIgnoreCase("Enviado") && !pedido.getEstado().equalsIgnoreCase("Recibido")) { %>
+    <% if (pedido.getEstado().equalsIgnoreCase("Pendiente")) { %>
         <form action="EliminarPedido" method="post" style="display:inline;" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">
                 <input type="hidden" name="idPedido" value="<%= pedido.getCodigo() %>">
                 <button type="submit" class="btn btn-sm btn-outline-danger ms-3" title="Eliminar pedido">

@@ -84,7 +84,7 @@ h3 {
     background-color: white;
     color: #000;
 }
-/* Fondo oscuro cuando el popup aparece */
+
 .popup-overlay {
     position: fixed;
     top: 0;

@@ -21,7 +21,7 @@ function anadirCarrito(nombre, precio, existencias, foto) {
         console.log('Producto añadido al carrito:', nombre);
     }
 
-    mostrarPopup();
+    mostrarPopup('Producto añadido al carrito:');
     guardarcarrito();
     console.log('Carrito actualizado:', carrito);
 }
@@ -121,7 +121,7 @@ function cargarCarrito() {
 
     let botonesHTML = `
     <div class="botones">
-        <button class="btn-sec btn-primary" onclick="tramitarPedido()">Comprar</button>
+        <button class="btn-sec btn-primary" onclick="comprobarStockAntesDeTramitar()">Comprar</button>
         <button class="btn-sec btn-secondary" onclick="vaciarCarrito()">Vaciar Carrito</button>
     </div>`;
 
@@ -133,11 +133,12 @@ function tramitarPedido() {
     window.location.href = "login-router.jsp?next=tramitarPedido.jsp";
 }
 
-function mostrarPopup(mensaje = "Producto añadido al carrito") {
+function mostrarPopup(mensaje) {
     let popupOverlay = document.getElementById("popup-overlay");
     let popupMessage = document.getElementById("popup-message");
 
-    popupMessage.innerText = mensaje; 
+
+    popupMessage.innerText = mensaje;
     popupOverlay.classList.add("show");
 }
 
@@ -155,7 +156,7 @@ function actualizarCantidad(nombre, cantidad) {
         if (productoExistente.existencias <= 0) {
             eliminarArticulo(nombre);
         } else if (productoExistente.existencias === 69){
-            window.location.href = "/resources/imagenes.html";
+            window.location.href = "resources/imagenes.html";
         } else {
             console.log(`Existencias de ${nombre} actualizadas. Nuevas existencias: ${productoExistente.existencias}`);
             guardarcarrito();
@@ -216,4 +217,44 @@ function actualizarCantidad(nombre, cantidad) {
             alert("Error al procesar pedido");
         });
     }
+}
+
+function comprobarStockAntesDeTramitar() {
+    let carritoParaEnviar = getCarrito();
+    if (!carritoParaEnviar || carritoParaEnviar.length === 0) {
+        mostrarPopup("El carrito está vacío");
+        return;
+    }
+
+    // Empaquetar dentro de "productos"
+    let datos = { productos: carritoParaEnviar };
+
+    fetch('ComprobarStockServlet', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(datos),
+        credentials: 'include'
+    })
+    .then(response => {
+        if (!response.ok) throw new Error("Error al comprobar stock");
+        return response.json();
+    })
+    .then(result => {
+        if (result.ok) {
+            tramitarPedido();
+        } else {
+            let errores = result.errores.map(e => {
+                if (e.error) {
+                    return `${e.producto}: ${e.error}`;
+                } else {
+                    return `${e.producto}: Stock disponible ${e.stock}, solicitado ${e.solicitado}`;
+                }
+            }).join("\n");
+            mostrarPopup("No hay suficiente stock para los siguientes productos:");
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        mostrarPopup("No hay suficiente stock para los siguientes productos:");
+    });
 }
