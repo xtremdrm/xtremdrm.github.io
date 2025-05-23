@@ -27,7 +27,7 @@ class Cabecera extends HTMLElement {
                             </a>
                         </li>
                         <li>
-                            <a href="/login.html" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Customers">
+                            <a href="LogoutServlet" class="nav-link py-3 px-2" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Customers">
                                 <i class="bi bi-x-circle fs-1"></i>
                             </a>
                         </li>

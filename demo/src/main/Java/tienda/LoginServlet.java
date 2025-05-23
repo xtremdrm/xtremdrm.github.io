@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
                     session.removeAttribute("next"); 
                     response.sendRedirect(next);
                 } else {
-                    response.sendRedirect("usuario.jsp");
+                        response.sendRedirect("usuario.jsp");
                 }
 
             } else {

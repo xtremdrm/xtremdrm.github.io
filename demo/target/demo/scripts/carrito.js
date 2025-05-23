@@ -156,7 +156,7 @@ function actualizarCantidad(nombre, cantidad) {
         if (productoExistente.existencias <= 0) {
             eliminarArticulo(nombre);
         } else if (productoExistente.existencias === 69){
-            window.location.href = "/resources/imagenes.html";
+            window.location.href = "resources/imagenes.html";
         } else {
             console.log(`Existencias de ${nombre} actualizadas. Nuevas existencias: ${productoExistente.existencias}`);
             guardarcarrito();
@@ -250,11 +250,11 @@ function comprobarStockAntesDeTramitar() {
                     return `${e.producto}: Stock disponible ${e.stock}, solicitado ${e.solicitado}`;
                 }
             }).join("\n");
-            mostrarPopup("No hay suficiente stock para los siguientes productos:");
+            mostrarPopup("No hay suficiente stock para satisfacer el pedido:");
         }
     })
     .catch(error => {
         console.error(error);
-        mostrarPopup("No hay suficiente stock para los siguientes productos:");
+        mostrarPopup("No hay suficiente stock para satisfacer el pedido");
     });
 }

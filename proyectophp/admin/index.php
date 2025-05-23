@@ -1,0 +1,52 @@
+<?php
+session_start();
+
+// Verificar si el usuario está autenticado
+if (!isset($_SESSION['userid'])) {
+    header('Location: login.html');
+    exit();
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/admin/styles/main.css">
+    <link rel="stylesheet" href="/admin/styles/navbar.css">
+    <title>Admin Site</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-auto bg-light sticky-top bg-dark">
+                <div class="d-flex flex-sm-column flex-row flex-nowrap bg-dark align-items-center sticky-top">
+                    <mi-cabecera></mi-cabecera>
+                </div>
+            </div>
+            <div class="col-sm p-3 min-vh-100">
+                <div class="col-sm d-flex justify-content-center align-items-center min-vh-100 text-center">
+                    <div>
+                        <h1 class="display-4">Bienvenido al Panel de Administración</h1>
+                        <p class="lead">Aquí puedes gestionar y configurar todos los aspectos del sitio web.</p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+    
+    <script src="scripts/Cabecera.js"></script>
+    <script src="scripts/footer.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

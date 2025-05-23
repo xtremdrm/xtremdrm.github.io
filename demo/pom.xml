@@ -16,8 +16,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.source>24</maven.compiler.source>
+    <maven.compiler.target>24</maven.compiler.target>
   </properties>
 
   <dependencies>
@@ -79,7 +79,7 @@
     <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jasper</artifactId>
-      <version>10.1.0</version> <!-- Compatible con jakarta.servlet:6 -->
+      <version>10.1.41</version> <!-- Compatible con jakarta.servlet:6 -->
     </dependency>
   </dependencies>
 

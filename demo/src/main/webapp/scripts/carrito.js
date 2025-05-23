@@ -250,11 +250,11 @@ function comprobarStockAntesDeTramitar() {
                     return `${e.producto}: Stock disponible ${e.stock}, solicitado ${e.solicitado}`;
                 }
             }).join("\n");
-            mostrarPopup("No hay suficiente stock para los siguientes productos:");
+            mostrarPopup("No hay suficiente stock para satisfacer el pedido:");
         }
     })
     .catch(error => {
         console.error(error);
-        mostrarPopup("No hay suficiente stock para los siguientes productos:");
+        mostrarPopup("No hay suficiente stock para satisfacer el pedido");
     });
 }
