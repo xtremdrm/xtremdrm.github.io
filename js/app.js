@@ -13,7 +13,7 @@
   setTime();
   setInterval(setTime, 30000);
 
-  // ---------- Toast (solo para microfeedback, no “demo”) ----------
+  // ---------- Toast ----------
   const toast = $("#toast");
   let toastTimer = null;
   function showToast(msg){
@@ -43,27 +43,38 @@
     backdrop?.classList.remove("open");
   }
   btnMenu?.addEventListener("click", openSidebar);
-  backdrop?.addEventListener("click", closeSidebar);
+  backdrop?.addEventListener("click", () => {
+    closeSidebar();
+    // si overlay cierra también feed drawer por seguridad
+    closeComments();
+  });
 
   // ---------- Navigation ----------
   const pages = $$(".page");
   const sideItems = $$(".sideItem");
+  let lastPage = "home";
 
   function setActiveNav(name){
     sideItems.forEach(b => b.classList.toggle("is-active", b.dataset.nav === name));
   }
 
-  function goTo(name){
+  function goTo(name, opts = {}){
     pages.forEach(p => p.classList.toggle("is-active", p.dataset.page === name));
     setActiveNav(name);
     closeSidebar();
-    if (name !== "feed") {
-        pauseAllFeedVideos();
-    }
+
+    // reglas vídeo: nunca en segundo plano
+    if (name !== "feed") pauseAllFeedVideos();
+    if (name !== "feed") closeComments();
+
+    // scroll top
     const active = pages.find(p => p.dataset.page === name);
-    if(active) active.scrollTo({top:0, behavior:"smooth"});
+    if(active && !opts.keepScroll) active.scrollTo({top:0, behavior:"smooth"});
 
     if(name === "feed") setTimeout(() => autoPlayVisibleFeedVideo(), 60);
+
+    // remember
+    if(!opts.silent) lastPage = name;
   }
 
   document.addEventListener("click", (e) => {
@@ -131,7 +142,7 @@
     return (day.events?.length || 0) + (day.checklist?.length || 0) > 0;
   }
 
-  function mondayIndex(jsDay){ // 0 Sun..6 Sat -> 0 Mon..6 Sun
+  function mondayIndex(jsDay){
     return (jsDay + 6) % 7;
   }
 
@@ -201,6 +212,7 @@
         selectedDate = cellDate;
         renderCalendar();
         renderDay();
+        renderHome();
       });
 
       calGrid.appendChild(cell);
@@ -240,9 +252,9 @@
 
       card.innerHTML = `
         <div class="pillTag ${tagClass}">${tagText}</div>
-        <div class="lcTitle">${ev.title}</div>
-        <div class="lcSub">${ev.time} · ${ev.note || ""}</div>
-        <button class="miniBtn" data-toast="Listo">OK</button>
+        <div class="lcTitle">${escapeHtml(ev.title)}</div>
+        <div class="lcSub">${escapeHtml(ev.time)} · ${escapeHtml(ev.note || "")}</div>
+        <button class="miniBtn" data-toast="Marcado">OK</button>
       `;
 
       dayEvents.appendChild(card);
@@ -274,7 +286,7 @@
       row.className = "checkItem";
       row.innerHTML = `
         <input type="checkbox" ${t.done ? "checked" : ""} data-check="${idx}" />
-        <span class="checkText">${t.text}</span>
+        <span class="checkText">${escapeHtml(t.text)}</span>
       `;
       dayChecklist.appendChild(row);
     });
@@ -295,6 +307,7 @@
     selectedDate = new Date(viewYear, viewMonth, 1);
     renderCalendar();
     renderDay();
+    renderHome();
   });
 
   calNext?.addEventListener("click", () => {
@@ -304,23 +317,7 @@
     selectedDate = new Date(viewYear, viewMonth, 1);
     renderCalendar();
     renderDay();
-  });
-
-  btnAddEvent?.addEventListener("click", () => {
-    const key = ymd(selectedDate);
-    const day = ensureDay(key);
-
-    // evento simple (placeholder funcional)
-    day.events.push({
-      type: Math.random() > 0.5 ? "med" : "appt",
-      title: Math.random() > 0.5 ? "Medicamento" : "Cita",
-      time: Math.random() > 0.5 ? "09:30" : "17:45",
-      note: "Añadido"
-    });
-
-    renderCalendar();
-    renderDay();
-    showToast("Evento añadido");
+    renderHome();
   });
 
   document.addEventListener("change", (e) => {
@@ -335,6 +332,7 @@
     day.checklist[idx].done = cb.checked;
     renderChecklist();
     renderCalendar();
+    renderHome();
   });
 
   btnChecklistReset?.addEventListener("click", () => {
@@ -343,17 +341,202 @@
     day.checklist.forEach(t => t.done = false);
     renderChecklist();
     renderCalendar();
+    renderHome();
     showToast("Checklist restablecida");
   });
 
+  // ---------- Sheet modal for add event / task ----------
+  const sheetBackdrop = $("#sheetBackdrop");
+  const sheet = $("#sheet");
+  const sheetTitle = $("#sheetTitle");
+  const sheetSub = $("#sheetSub");
+  const sheetBody = $("#sheetBody");
+  const sheetClose = $("#sheetClose");
+  const sheetCancel = $("#sheetCancel");
+  const sheetSave = $("#sheetSave");
+
+  let sheetCtx = null;
+
+  function openSheet(ctx){
+    sheetCtx = ctx;
+    if(sheetTitle) sheetTitle.textContent = ctx.title || "Añadir";
+    if(sheetSub) sheetSub.textContent = ctx.sub || "Completa los datos";
+    if(sheetBody) sheetBody.innerHTML = ctx.html || "";
+
+    sheetBackdrop?.classList.add("open");
+    sheet?.classList.add("open");
+    sheetBackdrop?.setAttribute("aria-hidden","false");
+    sheet?.setAttribute("aria-hidden","false");
+
+    // focus first input
+    setTimeout(() => {
+      const firstInput = sheetBody?.querySelector("input,select");
+      firstInput?.focus?.();
+    }, 80);
+  }
+
+  function closeSheet(){
+    sheetBackdrop?.classList.remove("open");
+    sheet?.classList.remove("open");
+    sheetBackdrop?.setAttribute("aria-hidden","true");
+    sheet?.setAttribute("aria-hidden","true");
+    sheetCtx = null;
+  }
+
+  sheetBackdrop?.addEventListener("click", closeSheet);
+  sheetClose?.addEventListener("click", closeSheet);
+  sheetCancel?.addEventListener("click", closeSheet);
+
+  sheetSave?.addEventListener("click", () => {
+    if(!sheetCtx?.onSave) return closeSheet();
+    const res = sheetCtx.onSave(sheetBody);
+    if(res === false) return; // prevent close if validation fails
+    closeSheet();
+  });
+
+  btnAddEvent?.addEventListener("click", () => {
+    const defaultTime = "09:00";
+    openSheet({
+      title: "Añadir evento",
+      sub: "Elige tipo, nombre y hora",
+      html: `
+        <div class="field">
+          <label>Tipo</label>
+          <select id="evType">
+            <option value="med">Medicación</option>
+            <option value="appt">Cita</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Nombre</label>
+          <input id="evTitle" type="text" placeholder="Ej: Paracetamol 1g / Fisioterapia" />
+        </div>
+        <div class="field">
+          <label>Hora</label>
+          <input id="evTime" type="time" value="${defaultTime}" />
+        </div>
+        <div class="field">
+          <label>Nota (opcional)</label>
+          <input id="evNote" type="text" placeholder="Ej: después de comer / clínica..." />
+        </div>
+      `,
+      onSave: (root) => {
+        const type = $("#evType", root)?.value || "appt";
+        const title = ($("#evTitle", root)?.value || "").trim();
+        const time = $("#evTime", root)?.value || "09:00";
+        const note = ($("#evNote", root)?.value || "").trim();
+
+        if(!title){
+          showToast("Pon un nombre");
+          $("#evTitle", root)?.focus?.();
+          return false;
+        }
+
+        const key = ymd(selectedDate);
+        const day = ensureDay(key);
+        day.events.push({ type, title, time, note });
+
+        renderCalendar();
+        renderDay();
+        renderHome();
+        showToast("Evento añadido");
+      }
+    });
+  });
+
   btnAddTask?.addEventListener("click", () => {
+    openSheet({
+      title: "Añadir tarea",
+      sub: "Escribe el nombre de la tarea",
+      html: `
+        <div class="field">
+          <label>Nombre</label>
+          <input id="taskTitle" type="text" placeholder="Ej: Estiramientos 5 min" />
+        </div>
+      `,
+      onSave: (root) => {
+        const title = ($("#taskTitle", root)?.value || "").trim();
+        if(!title){
+          showToast("Pon un nombre");
+          $("#taskTitle", root)?.focus?.();
+          return false;
+        }
+        const key = ymd(selectedDate);
+        const day = ensureDay(key);
+        day.checklist.push({ text: title, done: false });
+        renderChecklist();
+        renderCalendar();
+        renderHome();
+        showToast("Tarea añadida");
+      }
+    });
+  });
+
+  // ---------- HOME rendering ----------
+  const homeChecklist = $("#homeChecklist");
+  const homeEvents = $("#homeEvents");
+  const homeStatus = $("#homeStatus");
+  const homeProgressPct = $("#homeProgressPct");
+  const ringProg = $(".ringProg");
+  const homeUpcoming = $("#homeUpcoming");
+
+  function computeTodayStats(){
     const key = ymd(selectedDate);
     const day = ensureDay(key);
-    day.checklist.push({ text: "Nueva tarea", done: false });
-    renderChecklist();
-    renderCalendar();
-    showToast("Tarea añadida");
-  });
+    const total = day.checklist.length;
+    const done = day.checklist.filter(x=>x.done).length;
+    const eventsCount = day.events.length;
+
+    const pct = total === 0 ? (eventsCount ? 20 : 0) : Math.round((done / total) * 100);
+    const status = (pct >= 70) ? "Muy bien" : (pct >= 35 ? "En marcha" : "Inicio");
+
+    return { done, total, eventsCount, pct, status, day };
+  }
+
+  function renderHome(){
+    const st = computeTodayStats();
+
+    if(homeChecklist) homeChecklist.textContent = `${st.done}/${st.total}`;
+    if(homeEvents) homeEvents.textContent = `${st.eventsCount}`;
+    if(homeStatus) homeStatus.textContent = st.status;
+
+    if(homeProgressPct) homeProgressPct.textContent = `${st.pct}%`;
+    if(ringProg){
+      const circumference = 289;
+      const off = circumference - (st.pct/100)*circumference;
+      ringProg.style.strokeDashoffset = String(off);
+    }
+
+    if(homeUpcoming){
+      homeUpcoming.innerHTML = "";
+      const items = st.day.events.slice().sort((a,b)=>a.time.localeCompare(b.time)).slice(0, 3);
+
+      if(items.length === 0){
+        const empty = document.createElement("div");
+        empty.className = "listCard soft";
+        empty.innerHTML = `
+          <div class="pillTag softTag">Sin eventos</div>
+          <div class="lcTitle">Agenda tranquila</div>
+          <div class="lcSub">Puedes añadir un evento desde Calendario</div>
+        `;
+        homeUpcoming.appendChild(empty);
+      } else {
+        items.forEach(ev => {
+          const card = document.createElement("div");
+          card.className = "listCard";
+          const tagClass = ev.type === "med" ? "pink" : "rose";
+          const tagText  = ev.type === "med" ? "Medicación" : "Cita";
+
+          card.innerHTML = `
+            <div class="pillTag ${tagClass}">${tagText}</div>
+            <div class="lcTitle">${escapeHtml(ev.title)}</div>
+            <div class="lcSub">${escapeHtml(ev.time)} · ${escapeHtml(ev.note || "")}</div>
+          `;
+          homeUpcoming.appendChild(card);
+        });
+      }
+    }
+  }
 
   // ---------- Chat ----------
   const chatBody = $("#chatBody");
@@ -364,20 +547,188 @@
 
   let activeSpecialist = null;
 
-  function addBubble(text, who){
+  const chatMemory = {
+    // specialist -> { step:int, context: {...} }
+  };
+
+  function addBubble(text, who, opts = {}){
     if(!chatBody) return;
     const b = document.createElement("div");
-    b.className = `bubble ${who}`;
+    b.className = `bubble ${who}${opts.typing ? " typing" : ""}`;
     b.textContent = text;
     chatBody.appendChild(b);
     chatBody.scrollTo({ top: chatBody.scrollHeight, behavior:"smooth" });
+    return b;
+  }
+
+  function removeBubble(el){
+    if(el && el.parentNode) el.parentNode.removeChild(el);
+  }
+
+  function typingDelay(ms){
+    return new Promise(res => setTimeout(res, ms));
+  }
+
+  const scripts = {
+    "Psicología": {
+      intro: [
+        "Hola, soy Laura (psicóloga). Estoy aquí para ayudarte con claridad y sin juzgar.",
+        "Antes de empezar: ¿qué te pesa más hoy, ansiedad, culpa o agotamiento?",
+        "Y una rápida: ¿duermes razonablemente o estás en modo supervivencia?"
+      ],
+      flow: async (userText, mem) => {
+        // mem.step: 0..n
+        const t = userText.toLowerCase();
+
+        if(mem.step === 0){
+          mem.step++;
+          return [
+            "Gracias por contarlo. Vamos a hacerlo práctico.",
+            "Dime 1 cosa concreta que te preocupa (una sola).",
+          ];
+        }
+
+        if(mem.step === 1){
+          mem.step++;
+          return [
+            "Vale. Para bajar carga mental hoy: elige 1 prioridad y 2 'mínimos'.",
+            "Ejemplo: prioridad = medicación/seguridad. Mínimos = comer + 10 min de pausa.",
+            "¿Cuál sería tu prioridad de hoy?"
+          ];
+        }
+
+        if(mem.step === 2){
+          mem.step++;
+          return [
+            "Perfecto. Ahora lo convertimos en plan de 3 pasos:",
+            "1) Haz lo urgente (15 min). 2) Microdescanso (3 min). 3) Tarea mínima (10 min).",
+            "Si quieres, te ayudo a redactar tus 3 pasos con lo que me acabas de decir."
+          ];
+        }
+
+        // loop
+        return [
+          "Te leo. Si me dices contexto (tiempo, energía, apoyo), ajusto el plan a algo realista."
+        ];
+      }
+    },
+
+    "Fisioterapia": {
+      intro: [
+        "Hola, soy Dani (fisioterapeuta). Vamos a priorizar seguridad y técnica.",
+        "¿Dónde notas más carga: lumbar, cervical, hombros o piernas?",
+        "¿Hay dolor agudo (pinchazo) o es más tensión/cansancio?"
+      ],
+      flow: async (userText, mem) => {
+        if(mem.step === 0){
+          mem.step++;
+          return [
+            "Entendido. Te doy una pauta segura y corta.",
+            "Haz esto 2 minutos: hombros atrás, cuello largo, respiración lenta (4-4-6).",
+            "¿Puedes caminar 3-5 minutos hoy o estás muy limitado/a?"
+          ];
+        }
+        if(mem.step === 1){
+          mem.step++;
+          return [
+            "Bien. Para mover sin lesionarte:",
+            "— Pies separados, espalda neutra, carga pegada al cuerpo.",
+            "— Si giras: gira con pies, no con la cintura.",
+            "¿Qué movimiento te da más miedo ahora mismo?"
+          ];
+        }
+        return [
+          "Vale. Si me dices el movimiento exacto, lo desgloso en 3 cues simples para hacerlo bien."
+        ];
+      }
+    },
+
+    "Trabajo Social": {
+      intro: [
+        "Hola, soy Sara (trabajadora social). Te ayudo a encontrar recursos y pasos claros.",
+        "¿Buscas apoyo por dependencia, ayudas económicas o respiro familiar?",
+        "¿En Valencia ciudad o alrededores?"
+      ],
+      flow: async (userText, mem) => {
+        if(mem.step === 0){
+          mem.step++;
+          return [
+            "Perfecto. Te propongo un camino corto:",
+            "1) Centro de salud: pide cita con trabajo social sanitario.",
+            "2) Reúne: DNI, empadronamiento, informe médico (si lo tienes).",
+            "¿Tienes ya informes o partes médicos?"
+          ];
+        }
+        if(mem.step === 1){
+          mem.step++;
+          return [
+            "Si no tienes, no pasa nada: empezamos con lo básico.",
+            "¿Quieres que te haga una lista de documentos personalizada (3-5 ítems) según tu caso?"
+          ];
+        }
+        return [
+          "Te acompaño con esto. Si me dices tu objetivo (ej: respiro, ayuda, dependencia), lo aterrizo en pasos."
+        ];
+      }
+    },
+
+    "Medicina": {
+      intro: [
+        "Hola, soy Víctor (médico). Voy a preguntarte lo mínimo para orientar bien.",
+        "¿Qué síntoma o problema principal quieres comentar?",
+        "¿Hay fiebre, dificultad respiratoria, dolor fuerte o algo que te preocupe urgentemente?"
+      ],
+      flow: async (userText, mem) => {
+        if(mem.step === 0){
+          mem.step++;
+          return [
+            "Gracias. Para orientarte: ¿desde cuándo ocurre y cómo ha evolucionado?",
+            "¿Tomas medicación habitual o hay alergias?"
+          ];
+        }
+        if(mem.step === 1){
+          mem.step++;
+          return [
+            "Vale. Te dejo recomendaciones generales y señales de alarma.",
+            "Si aparece empeoramiento marcado, fiebre persistente o dolor intenso, toca consulta presencial.",
+            "¿Quieres que lo dejemos como checklist de síntomas para monitorizar hoy?"
+          ];
+        }
+        return [
+          "Te leo. Si me dices intensidad (0-10) y tiempo, ajusto mejor la recomendación."
+        ];
+      }
+    }
+  };
+
+  async function proSaySequence(lines){
+    // typing bubble
+    const typing = addBubble("…", "pro", { typing:true });
+    await typingDelay(550 + Math.random()*400);
+    removeBubble(typing);
+
+    for(const line of lines){
+      addBubble(line, "pro");
+      await typingDelay(380 + Math.random()*280);
+    }
   }
 
   function setSpecialist(name){
     activeSpecialist = name;
     $$(".chip").forEach(c => c.classList.toggle("active", c.dataset.specialist === name));
+
+    if(!chatMemory[name]) chatMemory[name] = { step: 0, context: {} };
+    const mem = chatMemory[name];
+
     if(chatHint) chatHint.textContent = `Conectado con ${name}.`;
-    addBubble(`Hola, soy ${name}. ¿En qué puedo ayudarte?`, "pro");
+
+    // start conversation if empty for that specialist
+    if(chatBody && chatBody.dataset.active !== name){
+      // clear, but keep "context" across switches? En UX real se mantiene por especialista.
+      chatBody.innerHTML = "";
+      chatBody.dataset.active = name;
+      proSaySequence(scripts[name].intro);
+    }
   }
 
   document.addEventListener("click", (e) => {
@@ -386,26 +737,28 @@
     setSpecialist(c.dataset.specialist);
   });
 
-  function botReply(){
-    const base = [
-      "Gracias. ¿Desde cuándo ocurre y con qué intensidad?",
-      "Entiendo. ¿Hay algo que lo empeore o lo mejore claramente?",
-      "Te propongo una pauta: divide en pasos, prioriza seguridad y descansa en micro-bloques."
-    ];
-    const msg = base[Math.floor(Math.random()*base.length)];
-    setTimeout(() => addBubble(msg, "pro"), 450);
-  }
-
-  function sendChatMsg(){
+  async function sendChatMsg(){
     const t = (chatInput?.value || "").trim();
     if(!t) return;
     if(!activeSpecialist){
       showToast("Selecciona una especialidad");
       return;
     }
+
     addBubble(t, "me");
     if(chatInput) chatInput.value = "";
-    botReply();
+
+    const mem = chatMemory[activeSpecialist] || (chatMemory[activeSpecialist] = { step: 0, context:{} });
+
+    const typing = addBubble("…", "pro", { typing:true });
+    await typingDelay(600 + Math.random()*500);
+    removeBubble(typing);
+
+    const replies = await scripts[activeSpecialist].flow(t, mem);
+    for(const r of replies){
+      addBubble(r, "pro");
+      await typingDelay(360 + Math.random()*260);
+    }
   }
 
   chatSend?.addEventListener("click", sendChatMsg);
@@ -416,6 +769,7 @@
   function resetChat(){
     if(!chatBody) return;
     chatBody.innerHTML = "";
+    chatBody.dataset.active = "";
     activeSpecialist = null;
     $$(".chip").forEach(c => c.classList.remove("active"));
     if(chatHint) chatHint.textContent = "Selecciona una especialidad para empezar.";
@@ -435,8 +789,21 @@
   const drawerClose = $("#drawerClose");
   const drawerSend = $("#drawerSend");
   const drawerInput = $("#drawerInput");
+  const drawerSub = $("#drawerSub");
+  const drawerSort = $("#drawerSort");
 
-  // Preparado: solo poner videos en assets/videos/
+  // Audio gating
+  let userHasInteracted = false;
+  const markUserInteraction = () => { userHasInteracted = true; };
+  window.addEventListener("pointerdown", markUserInteraction, { once: true, passive: true });
+  window.addEventListener("keydown", markUserInteraction, { once: true });
+
+  let activeFeedVideoEl = null;
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) pauseAllFeedVideos();
+  });
+
   const feedData = [
     { id: "v1", src: "assets/videos/demo1.mp4", title: "Mindfulness en 60s", sub: "Respira 4-4-6 y baja tensión mental" },
     { id: "v2", src: "assets/videos/demo2.mp4", title: "Movilización segura", sub: "Espalda neutra · apoyo · evita tirones" },
@@ -449,16 +816,22 @@
       likes: Math.floor(20 + Math.random()*120),
       liked: false,
       comments: [
-        { who: "Ana", txt: "Me viene genial para el día a día." },
-        { who: "Marco", txt: "Muy claro y directo." }
+        { who: "Ana", time: "Hoy", txt: "Me viene genial para el día a día." },
+        { who: "Marco", time: "Hoy", txt: "Muy claro y directo." },
+        { who: "Irene", time: "Ayer", txt: "Me ha ayudado a bajar tensión. Gracias." }
       ]
     };
   });
-function pauseAllFeedVideos(){
-  document.querySelectorAll(".feedVideo").forEach(v => {
-    v.pause();
-  });
-}
+
+  function pauseAllFeedVideos(){
+    document.querySelectorAll(".feedVideo").forEach(v => {
+      v.pause();
+      v.muted = true;
+      v.removeAttribute("data-audio");
+    });
+    activeFeedVideoEl = null;
+  }
+
   function renderFeed(){
     if(!feedContainer) return;
     feedContainer.innerHTML = "";
@@ -471,12 +844,20 @@ function pauseAllFeedVideos(){
       item.dataset.feedId = v.id;
 
       item.innerHTML = `
-        <video class="feedVideo" src="${v.src}" playsinlineloop></video>
+        <video
+          class="feedVideo"
+          src="${v.src}"
+          playsinline
+          loop
+          muted
+          preload="metadata"
+        ></video>
+
         <div class="feedOverlay"></div>
 
         <div class="feedMeta">
-          <div class="title">${v.title}</div>
-          <div class="sub">${v.sub}</div>
+          <div class="title">${escapeHtml(v.title)}</div>
+          <div class="sub">${escapeHtml(v.sub)}</div>
         </div>
 
         <div class="feedActions">
@@ -496,6 +877,15 @@ function pauseAllFeedVideos(){
               </svg>
             </button>
             <div class="fabCount" id="com-${v.id}">${st.comments.length}</div>
+          </div>
+
+          <div class="fabWrap">
+            <button class="fab" data-sound="${v.id}" aria-label="Activar sonido">
+              <svg viewBox="0 0 24 24">
+                <path d="M5 10v4h3l4 4V6L8 10H5zm10.5 2a3.5 3.5 0 0 0-2-3.15v6.3a3.5 3.5 0 0 0 2-3.15zm2.5 0a6 6 0 0 1-3.5 5.48v-1.6A4.5 4.5 0 0 0 18 12a4.5 4.5 0 0 0-3.5-4.38V6.02A6 6 0 0 1 18 12z"/>
+              </svg>
+            </button>
+            <div class="fabCount">Sonido</div>
           </div>
 
           <div class="fabWrap">
@@ -537,10 +927,15 @@ function pauseAllFeedVideos(){
     items.forEach(it => {
       const v = $("video", it);
       if(!v) return;
+
       if(it === best){
+        activeFeedVideoEl = v;
+        v.muted = true; // autoplay safe
         v.play().catch(()=>{});
       } else {
         v.pause();
+        v.muted = true;
+        v.removeAttribute("data-audio");
       }
     });
   }
@@ -548,6 +943,15 @@ function pauseAllFeedVideos(){
   feedContainer?.addEventListener("scroll", () => {
     window.clearTimeout(feedContainer._t);
     feedContainer._t = setTimeout(() => autoPlayVisibleFeedVideo(), 80);
+  });
+
+  // Drawer sorting
+  let drawerSortMode = "recent"; // recent | top
+
+  drawerSort?.addEventListener("click", () => {
+    drawerSortMode = drawerSortMode === "recent" ? "top" : "recent";
+    if(drawerSort) drawerSort.textContent = drawerSortMode === "recent" ? "Recientes" : "Populares";
+    if(currentCommentsId) renderComments(currentCommentsId);
   });
 
   document.addEventListener("click", (e) => {
@@ -571,6 +975,31 @@ function pauseAllFeedVideos(){
       openComments(comBtn.dataset.comments);
       return;
     }
+
+    const soundBtn = e.target.closest("[data-sound]");
+    if(soundBtn){
+      const id = soundBtn.dataset.sound;
+
+      if(!activeFeedVideoEl){
+        showToast("No hay vídeo activo");
+        return;
+      }
+      if(!userHasInteracted){
+        showToast("Toca una vez para activar audio");
+        return;
+      }
+      const activeItem = activeFeedVideoEl.closest(".feedItem");
+      if(!activeItem || activeItem.dataset.feedId !== id){
+        showToast("Activa el sonido del vídeo visible");
+        return;
+      }
+
+      const wantsAudio = activeFeedVideoEl.getAttribute("data-audio") !== "on";
+      activeFeedVideoEl.muted = !wantsAudio;
+      activeFeedVideoEl.setAttribute("data-audio", wantsAudio ? "on" : "off");
+      showToast(wantsAudio ? "Audio activado" : "Audio silenciado");
+      return;
+    }
   });
 
   let currentCommentsId = null;
@@ -582,6 +1011,9 @@ function pauseAllFeedVideos(){
     drawer?.setAttribute("aria-hidden","false");
     drawerBackdrop?.setAttribute("aria-hidden","false");
     renderComments(id);
+
+    // pausa mientras lees comentarios
+    if(activeFeedVideoEl) activeFeedVideoEl.pause();
   }
 
   function closeComments(){
@@ -590,31 +1022,69 @@ function pauseAllFeedVideos(){
     drawer?.setAttribute("aria-hidden","true");
     drawerBackdrop?.setAttribute("aria-hidden","true");
     currentCommentsId = null;
+
+    // reintenta autoplay al cerrar (seguirá muted)
+    setTimeout(() => autoPlayVisibleFeedVideo(), 60);
   }
 
   drawerBackdrop?.addEventListener("click", closeComments);
   drawerClose?.addEventListener("click", closeComments);
 
+  function initials(name){
+    const parts = String(name).trim().split(/\s+/);
+    const a = parts[0]?.[0] || "?";
+    const b = parts.length > 1 ? parts[parts.length-1]?.[0] : "";
+    return (a + b).toUpperCase();
+  }
+
   function renderComments(id){
     if(!drawerBody) return;
     const st = feedState[id];
+    if(!st) return;
+
+    if(drawerSub) drawerSub.textContent = `${st.comments.length} comentarios`;
+
     drawerBody.innerHTML = "";
-    st.comments.forEach(c => {
-      const div = document.createElement("div");
-      div.className = "comment";
-      div.innerHTML = `<div class="who">${c.who}</div><div class="txt">${c.txt}</div>`;
-      drawerBody.appendChild(div);
+
+    let list = st.comments.slice();
+
+    // fake "top" sort: longer text first
+    if(drawerSortMode === "top"){
+      list.sort((a,b) => (b.txt?.length||0) - (a.txt?.length||0));
+    } else {
+      // recent: keep as inserted (last newest)
+      list = list.slice().reverse();
+    }
+
+    list.forEach(c => {
+      const row = document.createElement("div");
+      row.className = "cRow";
+      row.innerHTML = `
+        <div class="avatar" aria-hidden="true">${initials(c.who)}</div>
+        <div class="cBubble">
+          <div class="cTop">
+            <div class="cWho">${escapeHtml(c.who)}</div>
+            <div class="cTime">${escapeHtml(c.time || "Ahora")}</div>
+          </div>
+          <div class="cTxt">${escapeHtml(c.txt)}</div>
+        </div>
+      `;
+      drawerBody.appendChild(row);
     });
   }
 
   drawerSend?.addEventListener("click", () => {
     const txt = (drawerInput?.value || "").trim();
     if(!txt || !currentCommentsId) return;
-    feedState[currentCommentsId].comments.push({ who: "Tú", txt });
+
+    // input UX: limpiar y añadir
+    feedState[currentCommentsId].comments.push({ who: "Tú", time:"Ahora", txt });
     if(drawerInput) drawerInput.value = "";
     renderComments(currentCommentsId);
+
     const comEl = $(`#com-${currentCommentsId}`);
     if(comEl) comEl.textContent = feedState[currentCommentsId].comments.length;
+
     showToast("Comentario añadido");
   });
 
@@ -622,16 +1092,19 @@ function pauseAllFeedVideos(){
     if(e.key === "Enter") drawerSend?.click();
   });
 
-  // ---------- Community (foro: posts -> página) ----------
+  // ---------- Community (foro: post -> page) ----------
   const forumList = $("#forumList");
   const btnNewPost = $("#btnNewPost");
-  const postBackdrop = $("#postBackdrop");
-  const postModal = $("#postModal");
-  const postClose = $("#postClose");
-  const pmTitle = $("#pmTitle");
-  const pmBody = $("#pmBody");
-  const pmSend = $("#pmSend");
-  const pmInput = $("#pmInput");
+
+  const postBack = $("#postBack");
+  const postPageTitle = $("#postPageTitle");
+  const postPageMeta = $("#postPageMeta");
+  const postPageReact = $("#postPageReact");
+  const postPageCard = $("#postPageCard");
+  const postPageThread = $("#postPageThread");
+  const postPageInput = $("#postPageInput");
+  const postPageSend = $("#postPageSend");
+  const postPageCount = $("#postPageCount");
 
   const forumData = [
     {
@@ -681,7 +1154,7 @@ function pauseAllFeedVideos(){
 
       row.innerHTML = `
         <div class="reactCol" data-stop>
-          <button class="reactBtn ${st.liked ? "liked" : ""}" data-likepost="${p.id}" aria-label="Me gusta">
+          <button class="reactBtn" data-likepost="${p.id}" aria-label="Me gusta">
             <svg viewBox="0 0 24 24">
               <path d="M12 21s-7-4.35-9.5-8.2C.2 9.2 2.1 5.7 5.8 5.2c2-.3 3.6.7 4.6 2 1-1.3 2.6-2.3 4.6-2 3.7.5 5.6 4 3.3 7.6C19 16.65 12 21 12 21z"/>
             </svg>
@@ -690,9 +1163,9 @@ function pauseAllFeedVideos(){
         </div>
 
         <div class="fBody">
-          <div class="fMeta">${p.category} · ${p.author} · ${p.time}</div>
-          <div class="fTitle">${p.title}</div>
-          <div class="fText">${p.text}</div>
+          <div class="fMeta">${escapeHtml(p.category)} · ${escapeHtml(p.author)} · ${escapeHtml(p.time)}</div>
+          <div class="fTitle">${escapeHtml(p.title)}</div>
+          <div class="fText">${escapeHtml(p.text)}</div>
           <div class="fFooter">
             <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z"/></svg>
             <span id="pc-${p.id}">${st.comments.length} comentarios</span>
@@ -703,6 +1176,85 @@ function pauseAllFeedVideos(){
       forumList.appendChild(row);
     });
   }
+
+  let openPostId = null;
+
+  function renderPostPage(id){
+    const p = forumData.find(x => x.id === id);
+    const st = forumState[id];
+    if(!p || !st) return;
+
+    openPostId = id;
+
+    if(postPageTitle) postPageTitle.textContent = p.title;
+    if(postPageMeta) postPageMeta.textContent = `${p.category} · ${p.author} · ${p.time}`;
+
+    if(postPageCard){
+      postPageCard.innerHTML = `
+        <div class="pillTag rose">${escapeHtml(p.category)}</div>
+        <div class="lcTitle">${escapeHtml(p.title)}</div>
+        <div class="lcSub">${escapeHtml(p.author)} · ${escapeHtml(p.time)}</div>
+        <div class="lcSub" style="margin-top:10px; color: rgba(31,27,36,.74);">${escapeHtml(p.text)}</div>
+      `;
+    }
+
+    if(postPageCount) postPageCount.textContent = `${st.comments.length}`;
+
+    if(postPageThread){
+      postPageThread.innerHTML = "";
+      st.comments.forEach(c => {
+        const el = document.createElement("div");
+        el.className = "tComment";
+        el.innerHTML = `
+          <div class="top">
+            <div class="who">${escapeHtml(c.who)}</div>
+            <div class="time">${escapeHtml(c.time || "")}</div>
+          </div>
+          <div class="txt">${escapeHtml(c.txt)}</div>
+        `;
+        postPageThread.appendChild(el);
+      });
+    }
+  }
+
+  function openPostPage(id){
+    renderPostPage(id);
+    goTo("post", { silent:true });
+  }
+
+  postBack?.addEventListener("click", () => {
+    goTo("community");
+  });
+
+  postPageReact?.addEventListener("click", () => {
+    if(!openPostId) return;
+    const st = forumState[openPostId];
+    st.liked = !st.liked;
+    st.likes += st.liked ? 1 : -1;
+
+    const countEl = $(`#plike-${openPostId}`);
+    if(countEl) countEl.textContent = st.likes;
+    showToast("Reacción actualizada");
+  });
+
+  postPageSend?.addEventListener("click", () => {
+    if(!openPostId) return;
+    const txt = (postPageInput?.value || "").trim();
+    if(!txt) return;
+
+    forumState[openPostId].comments.push({ who:"Tú", time:"Ahora", txt });
+    if(postPageInput) postPageInput.value = "";
+
+    const cEl = $(`#pc-${openPostId}`);
+    if(cEl) cEl.textContent = `${forumState[openPostId].comments.length} comentarios`;
+
+    renderPostPage(openPostId);
+    showToast("Comentario añadido");
+  });
+
+  postPageInput?.addEventListener("keydown", (e) => {
+    if(e.key === "Enter") postPageSend?.click();
+  });
 
   document.addEventListener("click", (e) => {
     const likePost = e.target.closest("[data-likepost]");
@@ -716,109 +1268,214 @@ function pauseAllFeedVideos(){
 
       const countEl = $(`#plike-${id}`);
       if(countEl) countEl.textContent = st.likes;
+
+      showToast(st.liked ? "Te gusta" : "Quitado");
       return;
     }
 
     const post = e.target.closest(".fPost");
     if(post){
       if(e.target.closest("[data-stop]")) return;
-      openPost(post.dataset.postId);
+      openPostPage(post.dataset.postId);
     }
   });
 
-  function openPost(id){
-    const p = forumData.find(x => x.id === id);
-    const st = forumState[id];
-    if(!p || !st) return;
-
-    pmTitle.textContent = p.title;
-
-    pmBody.innerHTML = `
-      <div class="listCard" style="margin-bottom:10px;">
-        <div class="pillTag rose">${p.category}</div>
-        <div class="lcTitle">${p.title}</div>
-        <div class="lcSub">${p.author} · ${p.time}</div>
-        <div class="lcSub" style="margin-top:10px; color: rgba(31,27,36,.74);">${p.text}</div>
-        <button class="miniBtn" id="pmLike" aria-label="Me gusta">❤</button>
-      </div>
-
-      <div class="thread" id="thread"></div>
-    `;
-
-    const pmLike = $("#pmLike", pmBody);
-    pmLike?.addEventListener("click", () => {
-      st.liked = !st.liked;
-      st.likes += st.liked ? 1 : -1;
-      const countEl = $(`#plike-${id}`);
-      if(countEl) countEl.textContent = st.likes;
-      showToast("Reacción actualizada");
-    });
-
-    const thread = $("#thread", pmBody);
-    st.comments.forEach(c => {
-      const el = document.createElement("div");
-      el.className = "tComment";
-      el.innerHTML = `
-        <div class="top">
-          <div class="who">${c.who}</div>
-          <div class="time">${c.time}</div>
-        </div>
-        <div class="txt">${c.txt}</div>
-      `;
-      thread.appendChild(el);
-    });
-
-    postBackdrop.classList.add("open");
-    postModal.classList.add("open");
-    postModal.dataset.openId = id;
-    postBackdrop.setAttribute("aria-hidden","false");
-    postModal.setAttribute("aria-hidden","false");
-  }
-
-  function closePost(){
-    postBackdrop.classList.remove("open");
-    postModal.classList.remove("open");
-    postModal.dataset.openId = "";
-    postBackdrop.setAttribute("aria-hidden","true");
-    postModal.setAttribute("aria-hidden","true");
-  }
-
-  postBackdrop?.addEventListener("click", closePost);
-  postClose?.addEventListener("click", closePost);
-
-  pmSend?.addEventListener("click", () => {
-    const id = postModal.dataset.openId;
-    if(!id) return;
-
-    const txt = (pmInput?.value || "").trim();
-    if(!txt) return;
-
-    forumState[id].comments.push({ who:"Tú", time:"Ahora", txt });
-    if(pmInput) pmInput.value = "";
-
-    const cEl = $(`#pc-${id}`);
-    if(cEl) cEl.textContent = `${forumState[id].comments.length} comentarios`;
-
-    openPost(id);
-    showToast("Comentario añadido");
-  });
-
-  pmInput?.addEventListener("keydown", (e) => {
-    if(e.key === "Enter") pmSend?.click();
-  });
-
   btnNewPost?.addEventListener("click", () => {
-    showToast("Función de publicación en preparación");
+    showToast("Publicación en preparación");
   });
+
+  // ---------- Centers (Valencia) ----------
+  const centersQuery = $("#centersQuery");
+  const centersFilters = $("#centersFilters");
+  const centersList = $("#centersList");
+
+  const centersData = [
+    {
+      id:"c1",
+      name:"Clínica Ruzafa Salud",
+      spec:"Medicina",
+      zone:"Ruzafa",
+      rating:4.6,
+      reviews:238,
+      price:"Consulta 45–60€",
+      address:"C/ Sueca, Valencia",
+      tags:["Cita rápida","Cercano","Seguimiento"],
+      distance:"1.2 km"
+    },
+    {
+      id:"c2",
+      name:"Centro Psico Valencia",
+      spec:"Psicología",
+      zone:"El Carmen",
+      rating:4.8,
+      reviews:312,
+      price:"Sesión 55–75€",
+      address:"C/ Caballeros, Valencia",
+      tags:["Ansiedad","Estrés","Terapia breve"],
+      distance:"2.4 km"
+    },
+    {
+      id:"c3",
+      name:"Fisio Nou Moles",
+      spec:"Fisioterapia",
+      zone:"Nou Moles",
+      rating:4.5,
+      reviews:184,
+      price:"Sesión 35–45€",
+      address:"Av. del Cid, Valencia",
+      tags:["Espalda","Cervical","Movilidad"],
+      distance:"3.1 km"
+    },
+    {
+      id:"c4",
+      name:"Unidad Social Valencia",
+      spec:"Trabajo Social",
+      zone:"Benimaclet",
+      rating:4.4,
+      reviews:92,
+      price:"Orientación 0–25€",
+      address:"C/ Emilio Baró, Valencia",
+      tags:["Recursos","Ayudas","Trámites"],
+      distance:"2.0 km"
+    },
+    {
+      id:"c5",
+      name:"Consulta Médica Alameda",
+      spec:"Medicina",
+      zone:"Alameda",
+      rating:4.7,
+      reviews:145,
+      price:"Consulta 50–70€",
+      address:"Paseo de la Alameda, Valencia",
+      tags:["Revisión","Crónicos","Analítica"],
+      distance:"1.8 km"
+    },
+    {
+      id:"c6",
+      name:"PsicoCare Patraix",
+      spec:"Psicología",
+      zone:"Patraix",
+      rating:4.6,
+      reviews:204,
+      price:"Sesión 50–70€",
+      address:"C/ Jesús, Valencia",
+      tags:["Culpa","Agotamiento","Duelo"],
+      distance:"2.7 km"
+    }
+  ];
+
+  let centersFilter = "all";
+
+  function setCenterFilter(f){
+    centersFilter = f;
+    $$(".filterChip", centersFilters).forEach(b => b.classList.toggle("active", b.dataset.centerFilter === f));
+    renderCenters();
+  }
+
+  centersFilters?.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-center-filter]");
+    if(!b) return;
+    setCenterFilter(b.dataset.centerFilter);
+  });
+
+  centersQuery?.addEventListener("input", renderCenters);
+
+  function renderCenters(){
+    if(!centersList) return;
+
+    const q = (centersQuery?.value || "").trim().toLowerCase();
+    let list = centersData.slice();
+
+    if(centersFilter !== "all"){
+      list = list.filter(x => x.spec === centersFilter);
+    }
+
+    if(q){
+      list = list.filter(x => {
+        const hay = `${x.name} ${x.spec} ${x.zone} ${x.address} ${x.tags.join(" ")}`.toLowerCase();
+        return hay.includes(q);
+      });
+    }
+
+    centersList.innerHTML = "";
+
+    if(list.length === 0){
+      const empty = document.createElement("div");
+      empty.className = "listCard soft";
+      empty.innerHTML = `
+        <div class="pillTag softTag">Sin resultados</div>
+        <div class="lcTitle">No encontramos centros</div>
+        <div class="lcSub">Prueba con otra especialidad o palabra clave</div>
+      `;
+      centersList.appendChild(empty);
+      return;
+    }
+
+    list.forEach(c => {
+      const card = document.createElement("div");
+      card.className = "centerCard";
+
+      const badge = c.spec === "Psicología" ? "Ψ" :
+                    c.spec === "Fisioterapia" ? "Fx" :
+                    c.spec === "Trabajo Social" ? "TS" : "MD";
+
+      card.innerHTML = `
+        <div class="centerBadge">${badge}</div>
+        <div class="centerBody">
+          <div class="centerTop">
+            <div style="min-width:0;">
+              <div class="centerName">${escapeHtml(c.name)}</div>
+              <div class="centerSpec">${escapeHtml(c.spec)} · ${escapeHtml(c.zone)} · ${escapeHtml(c.distance)}</div>
+            </div>
+            <button class="miniBtn" data-toast="Guardado">Guardar</button>
+          </div>
+
+          <div class="centerMeta">
+            <span class="metaChip rose">${escapeHtml(c.price)}</span>
+            <span class="metaChip">${escapeHtml(c.tags[0])}</span>
+            <span class="metaChip">${escapeHtml(c.tags[1])}</span>
+          </div>
+
+          <div class="centerAddr">${escapeHtml(c.address)}</div>
+
+          <div class="centerFoot">
+            <div class="stars">
+              <span class="starDot"></span>
+              ${c.rating.toFixed(1)} <span style="opacity:.6; font-weight:900;">(${c.reviews})</span>
+            </div>
+            <button class="ghostBtn" data-toast="Abriendo ficha">Ver</button>
+          </div>
+        </div>
+      `;
+
+      centersList.appendChild(card);
+    });
+  }
+
+  // ---------- Init data wiring ----------
+  function resetChatInit(){
+    resetChat();
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#039;');
+  }
 
   // ---------- Init ----------
   function init(){
     goTo("home");
     renderCalendar();
     renderDay();
-    resetChat();
+    renderHome();
+    resetChatInit();
     renderFeed();
     renderForum();
+    renderCenters();
   }
 
   init();
